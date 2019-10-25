@@ -1,0 +1,26 @@
+{
+    "name": "wasm-genplus",
+    "version": "1.0.0",
+    "description": "wasm-genplus",
+    "repository": {},
+    "license": "GPL",
+    "devDependencies": {
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.9",
+        "webpack-merge": "^4.2.2",
+        "html-webpack-plugin": "^3.2.0",
+        "babel-loader": "^8.0.6",
+        "@babel/core": "^7.6.4",
+        "@babel/preset-env": "^7.6.3",
+        "emcc-loader": "^0.0.3",
+        "webpack-dev-server": "^3.8.2",
+        "eslint": "^6.5.1",
+        "htmlhint": "^0.11.0"
+    },
+    "dependencies": {},
+    "scripts": {
+        "webpack": "webpack",
+        "watch": "webpack --config webpack.dev.js --watch",
+        "start": "webpack-dev-server --config webpack.dev.js"
+    }
+}
