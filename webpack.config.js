@@ -38,7 +38,7 @@ module.exports = {
                         options: {
                             buildDir: path.join(__dirname, '/temp'), // eslint-disable-line
                             commonFlags: [
-                                '-g',
+                                '-g4',
                                 '-Wall',
                                 '-Wextra',
                                 '-Isrc/main/c/core',
@@ -55,7 +55,6 @@ module.exports = {
                                 '-Isrc/main/c/wasm'
                             ],
                             cFlags: [
-                                '-DENVIRONMENT=web',
                                 '-std=gnu11',
                                 '-fomit-frame-pointer',
                                 '-Wno-strict-aliasing',
@@ -64,7 +63,7 @@ module.exports = {
                                 '-Wno-sign-compare',
                                 '-DLSB_FIRST',
                                 '-DUSE_16BPP_RENDERING',
-                                '-DMAXROMSIZE=1048576',
+                                '-DMAXROMSIZE=9437184',
                                 '-DHAVE_ALLOCA_H',
                                 '-DUSE_DYNAMIC_ALLOC',
                                 '-DALT_RENDERER',
@@ -73,7 +72,8 @@ module.exports = {
                             ],
                             ldFlags: [
                                 '-s', 'DEMANGLE_SUPPORT=1',
-                                '-s', "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']"
+                                '-s', "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']",
+                                '-s', "ALLOW_MEMORY_GROWTH=1"
                             ]
                         }
                     }

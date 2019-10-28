@@ -14,8 +14,6 @@ genplus.initialize().then(gens => {
             console.log("romdata: " + romdata[0]);
             romdata.set(new Uint8Array(bytes));
             console.log("rom loaded.");
-        })
-        .then(results => {
             gens._init();
             console.log("init");
         });
