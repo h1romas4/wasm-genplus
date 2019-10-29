@@ -45,7 +45,7 @@ void EMSCRIPTEN_KEEPALIVE init(void)
     // emurator init
     audio_init(SOUND_FREQUENCY, 0);
     system_init();
-    // system_reset();
+    system_reset();
 }
 
 void EMSCRIPTEN_KEEPALIVE loop(void) {
