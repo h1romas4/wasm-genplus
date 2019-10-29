@@ -26,7 +26,7 @@ int load_archive(char *filename, unsigned char *buffer, int maxsize, char *exten
 }
 
 uint8_t* EMSCRIPTEN_KEEPALIVE get_rom_buffer_ref(void) {
-    rom_buffer = malloc(sizeof(uint8_t) * 1048576);
+    rom_buffer = malloc(sizeof(uint8_t) * MAXROMSIZE);
     rom_buffer[0] = 99;
     return rom_buffer;
 }

@@ -12,7 +12,7 @@
 md_ntsc_t *md_ntsc;
 sms_ntsc_t *sms_ntsc;
 
-uint16_t *frame_buffer;
+uint32_t *frame_buffer;
 signed short *soundframe;
 
 struct _zbank_memory_map zbank_memory_map[256];
@@ -24,7 +24,7 @@ int sdl_input_update(void) {
 void EMSCRIPTEN_KEEPALIVE init(void)
 {
     // vram & sampling malloc
-    frame_buffer = malloc(sizeof(uint16_t) * 320 * 240);
+    frame_buffer = malloc(sizeof(uint32_t) * VIDEO_WIDTH * VIDEO_HEIGHT);
     soundframe = malloc(sizeof(signed short) * SOUND_SAMPLES_SIZE);
 
     // system init
@@ -33,9 +33,9 @@ void EMSCRIPTEN_KEEPALIVE init(void)
 
     // video ram init
     memset(&bitmap, 0, sizeof(bitmap));
-    bitmap.width      = 320;
-    bitmap.height     = 240;
-    bitmap.pitch      = 320 * 2;
+    bitmap.width      = VIDEO_WIDTH;
+    bitmap.height     = VIDEO_HEIGHT;
+    bitmap.pitch      = VIDEO_WIDTH * 4;
     bitmap.data       = (uint8_t *)frame_buffer;
     bitmap.viewport.changed = 3;
 
@@ -53,6 +53,6 @@ void EMSCRIPTEN_KEEPALIVE loop(void) {
     audio_update(soundframe);
 }
 
-uint16_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {
+uint32_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {
     return frame_buffer;
 }
