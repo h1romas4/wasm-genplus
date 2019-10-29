@@ -98,7 +98,7 @@
   *out++ = PIXEL(r,g,b); \
 }
 
-// RGBA -> ABGR
+// RGB -> ABGR
 #define CUSTOM_BLITTER(line, width, pixel, src)  \
 { \
     PIXEL_OUT_T *dst = ((PIXEL_OUT_T *)&bitmap.data[(line * bitmap.pitch)]); \
