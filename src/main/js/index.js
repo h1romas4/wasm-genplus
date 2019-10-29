@@ -6,6 +6,7 @@ const CANVAS_HEIGHT = 240;
 // emulator
 let gens;
 let romdata;
+let vram_ref;
 
 // canvas member
 let canvas;
@@ -40,13 +41,14 @@ genplus.initialize().then(wasm => {
         console.log("rom loaded.");
         gens._init();
         console.log("init");
+        vram_ref = gens._get_frame_buffer_ref();
         loop();
     });
 });
 
 let loop = function() {
     gens._loop();
-    let vram = new Uint8Array(gens.HEAPU32.buffer, gens._get_frame_buffer_ref(), CANVAS_WIDTH * CANVAS_HEIGHT * 4);
+    let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
     canvasImageData.data.set(vram);
     canvas_context.putImageData(canvasImageData, 0, 0);
     requestAnimationFrame(loop);

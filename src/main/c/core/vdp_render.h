@@ -98,6 +98,21 @@
   *out++ = PIXEL(r,g,b); \
 }
 
+// RGBA -> ABGR
+#define CUSTOM_BLITTER(line, width, pixel, src)  \
+{ \
+    PIXEL_OUT_T *dst = ((PIXEL_OUT_T *)&bitmap.data[(line * bitmap.pitch)]); \
+    do \
+    { \
+        uint32_t px = pixel[*src++]; \
+        uint8_t r = (px & 0xff0000) >> 16; \
+        uint8_t g = (px & 0x00ff00) >> 8; \
+        uint8_t b = (px & 0x0000ff) >> 0; \
+        *dst++ = (0xff << 24) | (b << 16) | (g << 8) | (r); \
+    } \
+    while (--width); \
+}
+
 /* Global variables */
 extern uint16 spr_col;
 
