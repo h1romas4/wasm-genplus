@@ -23,7 +23,7 @@ void set_config_defaults(void)
   config.ym2612         = YM2612_DISCRETE;
   config.ym2413         = 2; /* = AUTO (0 = always OFF, 1 = always ON) */
   config.ym3438         = 0;
-  config.mono           = 1;
+  config.mono           = 0;
 
   /* system options */
   config.system         = SYSTEM_MD; /* = AUTO (or SYSTEM_SG, SYSTEM_MARKIII, SYSTEM_SMS, SYSTEM_SMS2, SYSTEM_GG, SYSTEM_MD) */

@@ -9,7 +9,6 @@ const SOUND_SAMPLES_SIZE = 2048;
 let gens;
 let romdata;
 let vram_ref;
-let sound_ref;
 
 // canvas member
 let canvas;
@@ -18,7 +17,6 @@ let canvasImageData;
 
 // audio member
 let audioContext;
-let audioBuffer;
 
 // canvas setting
 (function() {
@@ -53,7 +51,6 @@ genplus.initialize().then(wasm => {
         gens._init();
         console.log("init");
         vram_ref = gens._get_frame_buffer_ref();
-        sound_ref = gens._get_sound_buffer_ref();
         canvas.addEventListener('click', start, false);
     });
 });
@@ -62,8 +59,6 @@ const start = function() {
     canvas.removeEventListener('click', start, false);
     // audio init
     audioContext = new AudioContext();
-    // TODO: mono to stereo
-    audioBuffer = audioContext.createBuffer(1, SOUND_SAMPLES_SIZE, SOUND_FREQUENCY);
     loop();
 };
 
@@ -74,9 +69,12 @@ const loop = function() {
     canvasImageData.data.set(vram);
     canvasContext.putImageData(canvasImageData, 0, 0);
     // sound
-    // TODO: change Float32Array
-    let sound = new Int16Array(gens.HEAP16.buffer, sound_ref, SOUND_SAMPLES_SIZE);
-    audioBuffer.getChannelData(0).set(sound);
+    let sampleSize = gens._sound();
+    let audioBuffer = audioContext.createBuffer(2, sampleSize, SOUND_FREQUENCY);
+    let audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), sampleSize);
+    let audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), sampleSize);
+    audioBuffer.getChannelData(0).set(audio_l);
+    audioBuffer.getChannelData(1).set(audio_r);
     let source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
     source.connect(audioContext.destination);

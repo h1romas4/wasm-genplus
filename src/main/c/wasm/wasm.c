@@ -13,7 +13,10 @@ md_ntsc_t *md_ntsc;
 sms_ntsc_t *sms_ntsc;
 
 uint32_t *frame_buffer;
-int16_t *soundframe;
+int16_t *sound_frame;
+
+float_t *web_audio_l;
+float_t *web_audio_r;
 
 struct _zbank_memory_map zbank_memory_map[256];
 
@@ -25,7 +28,9 @@ void EMSCRIPTEN_KEEPALIVE init(void)
 {
     // vram & sampling malloc
     frame_buffer = malloc(sizeof(uint32_t) * VIDEO_WIDTH * VIDEO_HEIGHT);
-    soundframe = malloc(sizeof(int16_t) * SOUND_SAMPLES_SIZE);
+    sound_frame = malloc(sizeof(int16_t) * SOUND_SAMPLES_SIZE);
+    web_audio_l = malloc(sizeof(float_t) * SOUND_SAMPLES_SIZE);
+    web_audio_r = malloc(sizeof(float_t) * SOUND_SAMPLES_SIZE);
 
     // system init
     error_init();
@@ -50,13 +55,27 @@ void EMSCRIPTEN_KEEPALIVE init(void)
 
 void EMSCRIPTEN_KEEPALIVE loop(void) {
     system_frame_gen(0);
-    audio_update(soundframe);
+}
+
+int EMSCRIPTEN_KEEPALIVE sound(void) {
+    int size = audio_update(sound_frame);
+    int p = 0;
+    for(int i = 0; i < size * 2; i+=2) {
+        web_audio_l[p] = sound_frame[i];
+        web_audio_r[p] = sound_frame[i + 1];
+        p++;
+    }
+    return size;
 }
 
 uint32_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {
     return frame_buffer;
 }
 
-int16_t* EMSCRIPTEN_KEEPALIVE get_sound_buffer_ref(void) {
-    return soundframe;
+float_t* EMSCRIPTEN_KEEPALIVE get_web_audio_l_ref(void) {
+    return web_audio_l;
+}
+
+float_t* EMSCRIPTEN_KEEPALIVE get_web_audio_r_ref(void) {
+    return web_audio_r;
 }
