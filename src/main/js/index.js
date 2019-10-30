@@ -3,7 +3,6 @@ import genplus from '../c/genplus';
 const CANVAS_WIDTH = 320;
 const CANVAS_HEIGHT = 240;
 const SOUND_FREQUENCY = 44100;
-const SOUND_SAMPLES_SIZE = 2048;
 
 // emulator
 let gens;
@@ -14,6 +13,13 @@ let vram_ref;
 let canvas;
 let canvasContext;
 let canvasImageData;
+
+// fps control
+const FPS = 60;
+const INTERVAL = 1000 / FPS;
+let now;
+let then;
+let delta;
 
 // audio member
 let audioContext;
@@ -59,26 +65,33 @@ const start = function() {
     canvas.removeEventListener('click', start, false);
     // audio init
     audioContext = new AudioContext();
+    // game loop
+    then = Date.now();
     loop();
 };
 
 const loop = function() {
-    gens._loop();
-    // video
-    let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
-    canvasImageData.data.set(vram);
-    canvasContext.putImageData(canvasImageData, 0, 0);
-    // sound
-    let sampleSize = gens._sound();
-    let audioBuffer = audioContext.createBuffer(2, sampleSize, SOUND_FREQUENCY);
-    let audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), sampleSize);
-    let audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), sampleSize);
-    audioBuffer.getChannelData(0).set(audio_l);
-    audioBuffer.getChannelData(1).set(audio_r);
-    let source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start();
-    // loop
     requestAnimationFrame(loop);
+    now = Date.now();
+    delta = now - then;
+    if (delta > INTERVAL) {
+        // update
+        gens._loop();
+        then = now - (delta % INTERVAL);
+        // draw
+        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
+        canvasImageData.data.set(vram);
+        canvasContext.putImageData(canvasImageData, 0, 0);
+        // sound
+        let sampleSize = gens._sound();
+        let audioBuffer = audioContext.createBuffer(2, sampleSize, SOUND_FREQUENCY);
+        let audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), sampleSize);
+        let audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), sampleSize);
+        audioBuffer.getChannelData(0).set(audio_l);
+        audioBuffer.getChannelData(1).set(audio_r);
+        let source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start();
+    }
 }
