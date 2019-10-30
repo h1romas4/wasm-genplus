@@ -2,16 +2,23 @@ import genplus from '../c/genplus';
 
 const CANVAS_WIDTH = 320;
 const CANVAS_HEIGHT = 240;
+const SOUND_FREQUENCY = 44100;
+const SOUND_SAMPLES_SIZE = 2048;
 
 // emulator
 let gens;
 let romdata;
 let vram_ref;
+let sound_ref;
 
 // canvas member
 let canvas;
-let canvas_context;
+let canvasContext;
 let canvasImageData;
+
+// audio member
+let audioContext;
+let audioBuffer;
 
 // canvas setting
 (function() {
@@ -23,8 +30,12 @@ let canvasImageData;
         canvas.style.width = 320 + "px";
         canvas.style.heigth = 240 + "px";
     }
-    canvas_context = canvas.getContext('2d');
-    canvasImageData = canvas_context.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+    canvasContext = canvas.getContext('2d');
+    canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+    // hit any key for audio context
+    canvasContext.font = "48px serif";
+    canvasContext.fillStyle = "#fff";
+    canvasContext.fillText("Click!", 100, 100);
 })();
 
 genplus.initialize().then(wasm => {
@@ -42,14 +53,34 @@ genplus.initialize().then(wasm => {
         gens._init();
         console.log("init");
         vram_ref = gens._get_frame_buffer_ref();
-        loop();
+        sound_ref = gens._get_sound_buffer_ref();
+        canvas.addEventListener('click', start, false);
     });
 });
 
-let loop = function() {
+const start = function() {
+    canvas.removeEventListener('click', start, false);
+    // audio init
+    audioContext = new AudioContext();
+    // TODO: mono to stereo
+    audioBuffer = audioContext.createBuffer(1, SOUND_SAMPLES_SIZE, SOUND_FREQUENCY);
+    loop();
+};
+
+const loop = function() {
     gens._loop();
+    // video
     let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
     canvasImageData.data.set(vram);
-    canvas_context.putImageData(canvasImageData, 0, 0);
+    canvasContext.putImageData(canvasImageData, 0, 0);
+    // sound
+    // TODO: change Float32Array
+    let sound = new Int16Array(gens.HEAP16.buffer, sound_ref, SOUND_SAMPLES_SIZE);
+    audioBuffer.getChannelData(0).set(sound);
+    let source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioContext.destination);
+    source.start();
+    // loop
     requestAnimationFrame(loop);
 }

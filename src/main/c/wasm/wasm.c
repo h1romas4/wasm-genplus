@@ -3,8 +3,8 @@
 #include "md_ntsc.h"
 #include "sms_ntsc.h"
 
-#define SOUND_FREQUENCY 48000
-#define SOUND_SAMPLES_SIZE  2048
+#define SOUND_FREQUENCY 44100
+#define SOUND_SAMPLES_SIZE 2048
 
 #define VIDEO_WIDTH  320
 #define VIDEO_HEIGHT 240
@@ -13,7 +13,7 @@ md_ntsc_t *md_ntsc;
 sms_ntsc_t *sms_ntsc;
 
 uint32_t *frame_buffer;
-signed short *soundframe;
+int16_t *soundframe;
 
 struct _zbank_memory_map zbank_memory_map[256];
 
@@ -25,7 +25,7 @@ void EMSCRIPTEN_KEEPALIVE init(void)
 {
     // vram & sampling malloc
     frame_buffer = malloc(sizeof(uint32_t) * VIDEO_WIDTH * VIDEO_HEIGHT);
-    soundframe = malloc(sizeof(signed short) * SOUND_SAMPLES_SIZE);
+    soundframe = malloc(sizeof(int16_t) * SOUND_SAMPLES_SIZE);
 
     // system init
     error_init();
@@ -55,4 +55,8 @@ void EMSCRIPTEN_KEEPALIVE loop(void) {
 
 uint32_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {
     return frame_buffer;
+}
+
+int16_t* EMSCRIPTEN_KEEPALIVE get_sound_buffer_ref(void) {
+    return soundframe;
 }
