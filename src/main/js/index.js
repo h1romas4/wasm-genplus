@@ -78,10 +78,6 @@ const loop = function() {
         // update
         gens._loop();
         then = now - (delta % INTERVAL);
-        // draw
-        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
-        canvasImageData.data.set(vram);
-        canvasContext.putImageData(canvasImageData, 0, 0);
         // sound
         let sampleSize = gens._sound();
         let audioBuffer = audioContext.createBuffer(2, sampleSize, SOUND_FREQUENCY);
@@ -92,6 +88,10 @@ const loop = function() {
         let source = audioContext.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(audioContext.destination);
-        source.start();
+        source.start(0);
+        // draw
+        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
+        canvasImageData.data.set(vram);
+        canvasContext.putImageData(canvasImageData, 0, 0);
     }
 }

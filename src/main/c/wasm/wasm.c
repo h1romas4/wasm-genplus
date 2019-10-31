@@ -53,6 +53,14 @@ void EMSCRIPTEN_KEEPALIVE init(void)
     system_reset();
 }
 
+float_t convert_sample_i2f(int16_t i) {
+    float_t f;
+    f = ((float) i) / (float) 32768;
+    if( f > 1 ) f = 1;
+    if( f < -1 ) f = -1;
+    return f;
+}
+
 void EMSCRIPTEN_KEEPALIVE loop(void) {
     system_frame_gen(0);
 }
@@ -61,11 +69,11 @@ int EMSCRIPTEN_KEEPALIVE sound(void) {
     int size = audio_update(sound_frame);
     int p = 0;
     for(int i = 0; i < size * 2; i+=2) {
-        web_audio_l[p] = sound_frame[i];
-        web_audio_r[p] = sound_frame[i + 1];
+        web_audio_l[p] = convert_sample_i2f(sound_frame[i]);
+        web_audio_r[p] = convert_sample_i2f(sound_frame[i + 1]);
         p++;
     }
-    return size;
+    return p;
 }
 
 uint32_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {
