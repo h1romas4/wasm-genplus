@@ -65,6 +65,7 @@ module.exports = {
                                 '-DUSE_32BPP_RENDERING',
                                 '-DMAXROMSIZE=10485760',
                                 '-DHAVE_ALLOCA_H',
+                                '-DHAVE_YM3438_CORE',
                                 '-DUSE_DYNAMIC_ALLOC',
                                 '-DALT_RENDERER',
                                 '-DALIGN_LONG',

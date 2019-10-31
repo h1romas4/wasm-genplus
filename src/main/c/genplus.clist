@@ -25,6 +25,7 @@
 ./core/sound/psg.c
 ./core/sound/ym2413.c
 ./core/sound/ym2612.c
+./core/sound/ym3438.c
 ./core/sound/blip_buf.c
 ./core/sound/eq.c
 ./core/cart_hw/sram.c
