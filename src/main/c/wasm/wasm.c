@@ -6,8 +6,8 @@
 #define SOUND_FREQUENCY 44100
 #define SOUND_SAMPLES_SIZE 2048
 
-#define VIDEO_WIDTH  320
-#define VIDEO_HEIGHT 240
+#define VIDEO_WIDTH  640
+#define VIDEO_HEIGHT 480
 
 md_ntsc_t *md_ntsc;
 sms_ntsc_t *sms_ntsc;

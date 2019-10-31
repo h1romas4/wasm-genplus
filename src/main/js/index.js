@@ -1,7 +1,7 @@
 import genplus from '../c/genplus';
 
-const CANVAS_WIDTH = 320;
-const CANVAS_HEIGHT = 240;
+const CANVAS_WIDTH = 640;
+const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
 
 // emulator
@@ -31,15 +31,15 @@ let audioContext;
     canvas.setAttribute('height', CANVAS_HEIGHT);
     let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
     if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
-        canvas.style.width = 320 + "px";
-        canvas.style.heigth = 240 + "px";
+        canvas.style.width = CANVAS_WIDTH + "px";
+        canvas.style.heigth = CANVAS_HEIGHT + "px";
     }
     canvasContext = canvas.getContext('2d');
     canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
     // hit any key for audio context
-    canvasContext.font = "48px serif";
+    canvasContext.font = "48px monospace";
     canvasContext.fillStyle = "#fff";
-    canvasContext.fillText("Click!", 100, 100);
+    canvasContext.fillText("HIT ANY KEY!", 80, 100);
 })();
 
 genplus.initialize().then(wasm => {
