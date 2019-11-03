@@ -27,7 +27,7 @@ emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.0
 
 ```
 git clone --recursive https://github.com/h1romas4/wasm-genplus.git
-cd wasm-genplus.git
+cd wasm-genplus
 mkdir build && cd build
 emcmake cmake ..
 emmake make
