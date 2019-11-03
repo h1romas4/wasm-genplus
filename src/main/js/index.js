@@ -1,5 +1,7 @@
-import genplus from '../c/genplus';
+import wasm from './genplus.js';
+import './genplus.wasm';
 
+const ROM_PATH = './roms/sonic2.bin';
 const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
@@ -42,11 +44,11 @@ let audioContext;
     canvasContext.fillText("HIT ANY KEY!", 80, 100);
 })();
 
-genplus.initialize().then(wasm => {
-    gens = wasm;
+wasm().then(function(module) {
+    gens = module;
     console.log(gens);
     // load rom
-    fetch('./roms/sonic2.bin').then(response => response.arrayBuffer())
+    fetch(ROM_PATH).then(response => response.arrayBuffer())
     .then(bytes => {
         // create buffer from wasm
         console.log("ptr: " + gens._get_rom_buffer_ref());

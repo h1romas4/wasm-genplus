@@ -76,6 +76,11 @@ add_compile_flags(C
 add_compile_flags(LD
     "-s DEMANGLE_SUPPORT=1"
     "-s ALLOW_MEMORY_GROWTH=1"
+    "-s MODULARIZE=1"
 )
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../src/main/js)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../src/main/js)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ../src/main/js)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

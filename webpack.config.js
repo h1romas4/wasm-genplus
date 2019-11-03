@@ -2,13 +2,13 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: {
         index: './src/main/js/index.js',
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.join(__dirname, '/dest'), // eslint-disable-line
+        path: path.join(__dirname, '/docs'), // eslint-disable-line
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -21,6 +21,14 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /.wasm$/,
+                type: "javascript/auto",
+                loader: "file-loader",
+                options: {
+                    name: '[name].[ext]'
+                }
+            },
+            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: [{
@@ -29,61 +37,11 @@ module.exports = {
                         presets: ['@babel/preset-env']
                     }
                 }]
-            },
-            {
-                test: /\.clist$/,
-                use: [
-                    {
-                        loader: 'emcc-loader',
-                        options: {
-                            buildDir: path.join(__dirname, '/temp'), // eslint-disable-line
-                            commonFlags: [
-                                '-g4',
-                                '-Wall',
-                                '-Wextra',
-                                '-Isrc/main/c/core',
-                                '-Isrc/main/c/core/sound',
-                                '-Isrc/main/c/core/cart_hw',
-                                '-Isrc/main/c/core/cart_hw/svp',
-                                '-Isrc/main/c/core/cd_hw',
-                                '-Isrc/main/c/core/ntsc',
-                                '-Isrc/main/c/core/tremor',
-                                '-Isrc/main/c/core/debug',
-                                '-Isrc/main/c/core/z80',
-                                '-Isrc/main/c/core/input_hw',
-                                '-Isrc/main/c/core/m68k',
-                                '-Isrc/main/c/wasm'
-                            ],
-                            cFlags: [
-                                '-std=gnu11',
-                                '-fomit-frame-pointer',
-                                '-Wno-strict-aliasing',
-                                '-Wno-unused-parameter',
-                                '-Wno-unused-function',
-                                '-Wno-sign-compare',
-                                '-DLSB_FIRST',
-                                '-DUSE_32BPP_RENDERING',
-                                '-DMAXROMSIZE=10485760',
-                                '-DHAVE_ALLOCA_H',
-                                '-DHAVE_YM3438_CORE',
-                                '-DUSE_DYNAMIC_ALLOC',
-                                '-DALT_RENDERER',
-                                '-DALIGN_LONG',
-                                '-DMAIXDUINO',
-                            ],
-                            ldFlags: [
-                                '-s', 'DEMANGLE_SUPPORT=1',
-                                '-s', "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']",
-                                '-s', "ALLOW_MEMORY_GROWTH=1"
-                            ]
-                        }
-                    }
-                ]
             }
         ]
     },
     resolve: {
-        extensions: ['.js', '.clist'],
+        extensions: ['.js'],
         modules: [
             "node_modules"
         ]
