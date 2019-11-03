@@ -6,10 +6,12 @@ const ROM_PATH = './roms/sonic2.bin';
 const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
+const SAMPLING_PER_FPS = 736;
 
 // emulator
 let gens;
 let romdata;
+let vram;
 
 // canvas member
 let canvas;
@@ -26,6 +28,8 @@ let delta;
 // audio member
 let audioContext;
 let bufferQueueNode;
+let audio_l;
+let audio_r;
 
 // canvas setting
 (function() {
@@ -65,10 +69,14 @@ const start = function() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // emulator start
     gens._start();
+    // vram view
+    vram = new Uint8ClampedArray(gens.HEAPU8.buffer, gens._get_frame_buffer_ref(), CANVAS_WIDTH * CANVAS_HEIGHT * 4);
+    // audio view
+    audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), SAMPLING_PER_FPS);
+    audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), SAMPLING_PER_FPS);
     // audio init
     audioContext = new (window.AudioContext || window.webkitAudioContext)({
-        sampleRate: SOUND_FREQUENCY,
-        numberOfChannels: 2
+        sampleRate: SOUND_FREQUENCY
     });
     bufferQueueNode = new BufferQueueNode({
         audioContext: audioContext,
@@ -91,15 +99,12 @@ const loop = function() {
         gens._loop();
         then = now - (delta % INTERVAL);
         // sound
-        let sampleSize = gens._sound();
-        let audioBuffer = audioContext.createBuffer(2, sampleSize, SOUND_FREQUENCY);
-        let audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), sampleSize);
-        let audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), sampleSize);
+        gens._sound();
+        let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
         audioBuffer.getChannelData(0).set(audio_l);
         audioBuffer.getChannelData(1).set(audio_r);
         bufferQueueNode.write(audioBuffer);
         // draw
-        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, gens._get_frame_buffer_ref(), CANVAS_WIDTH * CANVAS_HEIGHT * 4);
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
     }
