@@ -12,6 +12,7 @@ const SAMPLING_PER_FPS = 736;
 let gens;
 let romdata;
 let vram;
+let initialized = false;
 
 // canvas member
 let canvas;
@@ -31,24 +32,6 @@ let bufferQueueNode;
 let audio_l;
 let audio_r;
 
-// canvas setting
-(function() {
-    canvas = document.getElementById('screen');
-    canvas.setAttribute('width', CANVAS_WIDTH);
-    canvas.setAttribute('height', CANVAS_HEIGHT);
-    let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
-    if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
-        canvas.style.width = CANVAS_WIDTH + "px";
-        canvas.style.heigth = CANVAS_HEIGHT + "px";
-    }
-    canvasContext = canvas.getContext('2d');
-    canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-    // hit any key for audio context
-    canvasContext.font = "24px monospace";
-    canvasContext.fillStyle = "#fff";
-    canvasContext.fillText("HIT ANY KEY", 250, 250);
-})();
-
 wasm().then(function(module) {
     gens = module;
     // memory allocate
@@ -60,11 +43,12 @@ wasm().then(function(module) {
         // create buffer from wasm
         romdata = new Uint8Array(gens.HEAPU8.buffer, gens._get_rom_buffer_ref(), bytes.byteLength);
         romdata.set(new Uint8Array(bytes));
-        canvas.addEventListener('click', start, false);
+        initialized = true;
     });
 });
 
 const start = function() {
+    if(!initialized) return;
     canvas.removeEventListener('click', start, false);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // emulator start
@@ -108,4 +92,23 @@ const loop = function() {
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
     }
-}
+};
+
+// canvas setting
+(function() {
+    canvas = document.getElementById('screen');
+    canvas.setAttribute('width', CANVAS_WIDTH);
+    canvas.setAttribute('height', CANVAS_HEIGHT);
+    let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
+    if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
+        canvas.style.width = CANVAS_WIDTH + "px";
+        canvas.style.heigth = CANVAS_HEIGHT + "px";
+    }
+    canvasContext = canvas.getContext('2d');
+    canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+    canvas.addEventListener('click', start, false);
+    // hit any key for audio context
+    canvasContext.font = "24px monospace";
+    canvasContext.fillStyle = "#fff";
+    canvasContext.fillText("HIT ANY KEY", 250, 250);
+})();
