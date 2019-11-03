@@ -101,18 +101,14 @@
 // RGB -> ABGR
 #define CUSTOM_BLITTER(line, width, pixel, src)  \
 { \
-    PIXEL_OUT_T *dst = ((PIXEL_OUT_T *)&bitmap.data[(line * 2 * bitmap.pitch)]); \
+    PIXEL_OUT_T *dst = ((PIXEL_OUT_T *)&bitmap.data[(line * bitmap.pitch)]); \
     do \
     { \
         uint32_t px = pixel[*src++]; \
         uint8_t r = (px & 0xff0000) >> 16; \
         uint8_t g = (px & 0x00ff00) >> 8; \
         uint8_t b = (px & 0x0000ff) >> 0; \
-        PIXEL_OUT_T pset = (0xff << 24) | (b << 16) | (g << 8) | (r); \
-        *(dst + 0) = pset; \
-        *(dst + 1) = pset; \
-        *(dst + line * bitmap.pitch + 0) = pset; \
-        *(dst + line * bitmap.pitch + 1) = pset; \
+        *dst++ = (0xff << 24) | (b << 16) | (g << 8) | (r); \
     } \
     while (--width); \
 }
