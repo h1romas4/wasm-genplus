@@ -55,6 +55,10 @@ add_source_files(
     ./src/main/c/wasm/wasm.c
 )
 
+# source map option (but not working)
+#    -g4
+#    --source-map-base src/main/c
+
 add_compile_flags(C
     -std=gnu11
     -fomit-frame-pointer
