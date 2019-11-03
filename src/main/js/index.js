@@ -13,6 +13,7 @@ let gens;
 let romdata;
 let vram;
 let initialized = false;
+let pause = false;
 
 // canvas member
 let canvas;
@@ -50,6 +51,9 @@ wasm().then(function(module) {
 const start = function() {
     if(!initialized) return;
     canvas.removeEventListener('click', start, false);
+    canvas.addEventListener('click', function() {
+        pause = !pause;
+    }, false);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // emulator start
     gens._start();
@@ -78,7 +82,7 @@ const loop = function() {
     requestAnimationFrame(loop);
     now = Date.now();
     delta = now - then;
-    if (delta > INTERVAL) {
+    if (delta > INTERVAL && !pause) {
         // update
         gens._loop();
         then = now - (delta % INTERVAL);
