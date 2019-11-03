@@ -40,9 +40,9 @@ let bufferQueueNode;
     canvasContext = canvas.getContext('2d');
     canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
     // hit any key for audio context
-    canvasContext.font = "48px monospace";
+    canvasContext.font = "24px monospace";
     canvasContext.fillStyle = "#fff";
-    canvasContext.fillText("HIT ANY KEY!", 80, 100);
+    canvasContext.fillText("HIT ANY KEY", 250, 250);
 })();
 
 wasm().then(function(module) {
@@ -62,10 +62,11 @@ wasm().then(function(module) {
 
 const start = function() {
     canvas.removeEventListener('click', start, false);
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // emulator start
     gens._start();
     // audio init
-    audioContext = new AudioContext({
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({
         sampleRate: SOUND_FREQUENCY,
         numberOfChannels: 2
     });
