@@ -17,7 +17,9 @@
         "eslint": "^6.5.1",
         "htmlhint": "^0.11.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "web-audio-buffer-queue": "^1.1.0"
+    },
     "scripts": {
         "webpack": "webpack",
         "server": "webpack-dev-server --config webpack.dev.js"

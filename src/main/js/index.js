@@ -1,5 +1,6 @@
 import wasm from './genplus.js';
 import './genplus.wasm';
+import BufferQueueNode from 'web-audio-buffer-queue'
 
 const ROM_PATH = './roms/sonic2.bin';
 const CANVAS_WIDTH = 640;
@@ -24,6 +25,7 @@ let delta;
 
 // audio member
 let audioContext;
+let bufferQueueNode;
 
 // canvas setting
 (function() {
@@ -63,7 +65,17 @@ const start = function() {
     // emulator start
     gens._start();
     // audio init
-    audioContext = new AudioContext();
+    audioContext = new AudioContext({
+        sampleRate: SOUND_FREQUENCY,
+        numberOfChannels: 2
+    });
+    bufferQueueNode = new BufferQueueNode({
+        audioContext: audioContext,
+        objectMode: true,
+        channels: 2,
+        bufferSize: 512
+    });
+    bufferQueueNode.connect(audioContext.destination);
     // game loop
     then = Date.now();
     loop();
@@ -84,10 +96,7 @@ const loop = function() {
         let audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), sampleSize);
         audioBuffer.getChannelData(0).set(audio_l);
         audioBuffer.getChannelData(1).set(audio_r);
-        let source = audioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(audioContext.destination);
-        source.start(0);
+        bufferQueueNode.write(audioBuffer);
         // draw
         let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, gens._get_frame_buffer_ref(), CANVAS_WIDTH * CANVAS_HEIGHT * 4);
         canvasImageData.data.set(vram);
