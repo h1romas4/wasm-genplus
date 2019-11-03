@@ -1,5 +1,6 @@
 #include <emscripten/emscripten.h>
 #include "shared.h"
+#include "fileio.h"
 #include "md_ntsc.h"
 #include "sms_ntsc.h"
 
@@ -27,11 +28,15 @@ int sdl_input_update(void) {
 void EMSCRIPTEN_KEEPALIVE init(void)
 {
     // vram & sampling malloc
+    rom_buffer = malloc(sizeof(uint8_t) * MAXROMSIZE);
     frame_buffer = malloc(sizeof(uint32_t) * VIDEO_WIDTH * VIDEO_HEIGHT);
     sound_frame = malloc(sizeof(int16_t) * SOUND_SAMPLES_SIZE);
     web_audio_l = malloc(sizeof(float_t) * SOUND_SAMPLES_SIZE);
     web_audio_r = malloc(sizeof(float_t) * SOUND_SAMPLES_SIZE);
+}
 
+void EMSCRIPTEN_KEEPALIVE start(void)
+{
     // system init
     error_init();
     set_config_defaults();
@@ -78,6 +83,10 @@ int EMSCRIPTEN_KEEPALIVE sound(void) {
         p++;
     }
     return p;
+}
+
+uint8_t* EMSCRIPTEN_KEEPALIVE get_rom_buffer_ref(void) {
+    return rom_buffer;
 }
 
 uint32_t* EMSCRIPTEN_KEEPALIVE get_frame_buffer_ref(void) {

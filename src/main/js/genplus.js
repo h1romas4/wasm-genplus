@@ -1217,11 +1217,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 7642672,
+    STACK_BASE = 7642544,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 2399792,
-    DYNAMIC_BASE = 7642672,
-    DYNAMICTOP_PTR = 2399632;
+    STACK_MAX = 2399664,
+    DYNAMIC_BASE = 7642544,
+    DYNAMICTOP_PTR = 2399504;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1743,40 +1743,12 @@ var tempI64;
 
 // === Body ===
 
-var ASM_CONSTS = [function($0) {console.log('rom_buffer: ' + $0);},
- function($0) {console.log('genplus_buffer0: ' + $0);},
- function($0) {console.log('genplus_buffer1: ' + $0);}];
-
-function readAsmConstArgs(sig_ptr, buf) {
-  var args = [];
-  var sig = AsciiToString(sig_ptr);
-  function align_to(ptr, align) {
-    return (ptr+align-1) & ~(align-1);
-  }
-  for (var i = 0; i < sig.length; i++) {
-    var c = sig[i];
-    if (c == 'd' || c == 'f') {
-      buf = align_to(buf, 8);
-      args.push(HEAPF64[(buf >> 3)]);
-      buf += 8;
-    } else if (c == 'i') {
-      buf = align_to(buf, 4);
-      args.push(HEAP32[(buf >> 2)]);
-      buf += 4;
-    }
-  }
-  return args;
-}
-
-
-function _emscripten_asm_const_iii(code, sig_ptr, argbuf) {
-  var args = readAsmConstArgs(sig_ptr, argbuf);
-  return ASM_CONSTS[code].apply(null, args);
-}
+var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 2398768;
+
+// STATICTOP = STATIC_BASE + 2398640;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -1860,7 +1832,7 @@ function _emscripten_asm_const_iii(code, sig_ptr, argbuf) {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 2399632;
+      return 2399504;
     }
 
   
@@ -2283,7 +2255,7 @@ function intArrayToString(array) {
 // ASM_LIBRARY EXTERN PRIMITIVES: Int8Array,Int32Array
 
 var asmGlobalArg = {};
-var asmLibraryArg = { "__lock": ___lock, "__unlock": ___unlock, "abort": _abort, "abs": _abs, "emscripten_asm_const_iii": _emscripten_asm_const_iii, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_longjmp": _emscripten_longjmp, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "fd_close": _fd_close, "fd_seek": _fd_seek, "fd_write": _fd_write, "getTempRet0": _getTempRet0, "invoke_i": invoke_i, "invoke_v": invoke_v, "memory": wasmMemory, "saveSetjmp": _saveSetjmp, "setTempRet0": _setTempRet0, "table": wasmTable, "testSetjmp": _testSetjmp };
+var asmLibraryArg = { "__lock": ___lock, "__unlock": ___unlock, "abort": _abort, "abs": _abs, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_longjmp": _emscripten_longjmp, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "fd_close": _fd_close, "fd_seek": _fd_seek, "fd_write": _fd_write, "getTempRet0": _getTempRet0, "invoke_i": invoke_i, "invoke_v": invoke_v, "memory": wasmMemory, "saveSetjmp": _saveSetjmp, "setTempRet0": _setTempRet0, "table": wasmTable, "testSetjmp": _testSetjmp };
 var asm = createWasm();
 var real____wasm_call_ctors = asm["__wasm_call_ctors"];
 asm["__wasm_call_ctors"] = function() {
@@ -2306,18 +2278,18 @@ asm["free"] = function() {
   return real__free.apply(null, arguments);
 };
 
-var real__get_rom_buffer_ref = asm["get_rom_buffer_ref"];
-asm["get_rom_buffer_ref"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return real__get_rom_buffer_ref.apply(null, arguments);
-};
-
 var real__init = asm["init"];
 asm["init"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return real__init.apply(null, arguments);
+};
+
+var real__start = asm["start"];
+asm["start"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__start.apply(null, arguments);
 };
 
 var real__loop = asm["loop"];
@@ -2332,6 +2304,13 @@ asm["sound"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return real__sound.apply(null, arguments);
+};
+
+var real__get_rom_buffer_ref = asm["get_rom_buffer_ref"];
+asm["get_rom_buffer_ref"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__get_rom_buffer_ref.apply(null, arguments);
 };
 
 var real__get_frame_buffer_ref = asm["get_frame_buffer_ref"];
@@ -2528,16 +2507,16 @@ var _free = Module["_free"] = function() {
   return Module["asm"]["free"].apply(null, arguments)
 };
 
-var _get_rom_buffer_ref = Module["_get_rom_buffer_ref"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["get_rom_buffer_ref"].apply(null, arguments)
-};
-
 var _init = Module["_init"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["init"].apply(null, arguments)
+};
+
+var _start = Module["_start"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["start"].apply(null, arguments)
 };
 
 var _loop = Module["_loop"] = function() {
@@ -2550,6 +2529,12 @@ var _sound = Module["_sound"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["sound"].apply(null, arguments)
+};
+
+var _get_rom_buffer_ref = Module["_get_rom_buffer_ref"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_rom_buffer_ref"].apply(null, arguments)
 };
 
 var _get_frame_buffer_ref = Module["_get_frame_buffer_ref"] = function() {

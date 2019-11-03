@@ -9,7 +9,6 @@ const SOUND_FREQUENCY = 44100;
 // emulator
 let gens;
 let romdata;
-let vram_ref;
 
 // canvas member
 let canvas;
@@ -46,25 +45,23 @@ let audioContext;
 
 wasm().then(function(module) {
     gens = module;
+    // memory allocate
+    gens._init();
     console.log(gens);
     // load rom
     fetch(ROM_PATH).then(response => response.arrayBuffer())
     .then(bytes => {
         // create buffer from wasm
-        console.log("ptr: " + gens._get_rom_buffer_ref());
         romdata = new Uint8Array(gens.HEAPU8.buffer, gens._get_rom_buffer_ref(), bytes.byteLength);
-        console.log("romdata: " + romdata[0]);
         romdata.set(new Uint8Array(bytes));
-        console.log("rom loaded.");
-        gens._init();
-        console.log("init");
-        vram_ref = gens._get_frame_buffer_ref();
         canvas.addEventListener('click', start, false);
     });
 });
 
 const start = function() {
     canvas.removeEventListener('click', start, false);
+    // emulator start
+    gens._start();
     // audio init
     audioContext = new AudioContext();
     // game loop
@@ -92,7 +89,7 @@ const loop = function() {
         source.connect(audioContext.destination);
         source.start(0);
         // draw
-        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, vram_ref, CANVAS_WIDTH * CANVAS_HEIGHT * 4);
+        let vram = new Uint8ClampedArray(gens.HEAPU8.buffer, gens._get_frame_buffer_ref(), CANVAS_WIDTH * CANVAS_HEIGHT * 4);
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
     }

@@ -44,5 +44,6 @@
 
 /* Function prototypes */
 extern int load_archive(char *filename, unsigned char *buffer, int maxsize, char *extension);
+extern uint8_t *rom_buffer;
 
 #endif /* _FILEIO_H_ */
