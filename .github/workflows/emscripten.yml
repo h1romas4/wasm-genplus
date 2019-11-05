@@ -14,15 +14,15 @@ jobs:
         cd emsdk
         ./emsdk install latest
         ./emsdk activate latest
-        source ./emsdk_env.sh
-        cd ..
 
     - name: Emscripten build
       run: |
+        cd emsdk
+        source ./emsdk_env.sh
+        cd ../
         mkdir build && cd build
         emcmake cmake ..
         emmake make
-        cd ..
 
     - name: npm build
       run: |
