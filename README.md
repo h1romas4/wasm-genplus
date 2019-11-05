@@ -25,6 +25,8 @@ emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.0
 
 ## Build
 
+![](https://github.com/h1romas4/wasm-genplus/workflows/Emscripten%20CI/badge.svg)
+
 **Emscripten**
 
 ```
