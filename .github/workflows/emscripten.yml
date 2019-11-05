@@ -24,7 +24,7 @@ jobs:
         emcmake cmake ..
         emmake make
 
-    - name: npm build
+    - name: webpack build
       run: |
         npm install
-        npm webpack
+        npm run webpack
