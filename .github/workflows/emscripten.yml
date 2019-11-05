@@ -1,0 +1,30 @@
+name: Emscripten CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Emscripten SDK
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk_env.sh
+        cd ..
+
+    - name: Emscripten build
+      run: |
+        mkdir build && cd build
+        emcmake cmake ..
+        emmake make
+        cd ..
+
+    - name: npm build
+      run: |
+        npm install
+        npm webpack
