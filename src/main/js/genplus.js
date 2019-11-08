@@ -2306,6 +2306,13 @@ asm["free"] = function() {
   return real__free.apply(null, arguments);
 };
 
+var real__wasm_input_update = asm["wasm_input_update"];
+asm["wasm_input_update"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__wasm_input_update.apply(null, arguments);
+};
+
 var real__init = asm["init"];
 asm["init"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
@@ -2320,11 +2327,11 @@ asm["start"] = function() {
   return real__start.apply(null, arguments);
 };
 
-var real__loop = asm["loop"];
-asm["loop"] = function() {
+var real__tick = asm["tick"];
+asm["tick"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return real__loop.apply(null, arguments);
+  return real__tick.apply(null, arguments);
 };
 
 var real__sound = asm["sound"];
@@ -2360,6 +2367,13 @@ asm["get_web_audio_r_ref"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return real__get_web_audio_r_ref.apply(null, arguments);
+};
+
+var real__get_input_buffer_ref = asm["get_input_buffer_ref"];
+asm["get_input_buffer_ref"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__get_input_buffer_ref.apply(null, arguments);
 };
 
 var real__fflush = asm["fflush"];
@@ -2535,6 +2549,12 @@ var _free = Module["_free"] = function() {
   return Module["asm"]["free"].apply(null, arguments)
 };
 
+var _wasm_input_update = Module["_wasm_input_update"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["wasm_input_update"].apply(null, arguments)
+};
+
 var _init = Module["_init"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -2547,10 +2567,10 @@ var _start = Module["_start"] = function() {
   return Module["asm"]["start"].apply(null, arguments)
 };
 
-var _loop = Module["_loop"] = function() {
+var _tick = Module["_tick"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["loop"].apply(null, arguments)
+  return Module["asm"]["tick"].apply(null, arguments)
 };
 
 var _sound = Module["_sound"] = function() {
@@ -2581,6 +2601,12 @@ var _get_web_audio_r_ref = Module["_get_web_audio_r_ref"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["get_web_audio_r_ref"].apply(null, arguments)
+};
+
+var _get_input_buffer_ref = Module["_get_input_buffer_ref"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_input_buffer_ref"].apply(null, arguments)
 };
 
 var _fflush = Module["_fflush"] = function() {

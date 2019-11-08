@@ -29,6 +29,8 @@
         "utility": "c",
         "valarray": "c",
         "vector": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "fileio.h": "c",
+        "input.h": "c"
     }
 }

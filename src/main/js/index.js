@@ -7,11 +7,13 @@ const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
 const SAMPLING_PER_FPS = 736;
+const GAMEPAD_API_INDEX = 32;
 
 // emulator
 let gens;
 let romdata;
 let vram;
+let input;
 let initialized = false;
 let pause = false;
 
@@ -73,9 +75,27 @@ const start = function() {
         bufferSize: 512
     });
     bufferQueueNode.connect(audioContext.destination);
+    // input
+    input = new Float32Array(gens.HEAPF32.buffer, gens._get_input_buffer_ref(), GAMEPAD_API_INDEX);
     // game loop
     then = Date.now();
     loop();
+};
+
+const keyscan = function() {
+    input.fill(0);
+    let gamepads = navigator.getGamepads();
+    if(gamepads.length == 0) return;
+    let gamepad = gamepads[0];
+    // for Microsoft XBOX ONE
+    // axes 0 - 7
+    gamepad.axes.forEach((value, index) => {
+        input[index] = value;
+    });
+    // button 0 - 10
+    gamepad.buttons.forEach((button, index) => {
+        input[index + 8] = button.value;
+    });
 };
 
 const loop = function() {
@@ -83,8 +103,9 @@ const loop = function() {
     now = Date.now();
     delta = now - then;
     if (delta > INTERVAL && !pause) {
+        keyscan();
         // update
-        gens._loop();
+        gens._tick();
         then = now - (delta % INTERVAL);
         // sound
         gens._sound();

@@ -15,7 +15,7 @@
 #include "fileio.h"
 #include "scrc32.h"
 
-#define osd_input_update sdl_input_update
+#define osd_input_update wasm_input_update
 
 #define GG_ROM      "./ggenie.bin"
 #define AR_ROM      "./areplay.bin"
