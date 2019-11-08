@@ -50,7 +50,7 @@ void EMSCRIPTEN_KEEPALIVE start(void)
     bitmap.viewport.changed = 3;
 
     // load rom
-    load_rom("sonic2.bin");
+    load_rom("dummy.bin");
 
     // emurator init
     audio_init(SOUND_FREQUENCY, 0);
