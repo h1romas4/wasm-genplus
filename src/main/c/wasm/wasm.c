@@ -10,9 +10,6 @@
 #define VIDEO_WIDTH  640
 #define VIDEO_HEIGHT 480
 
-md_ntsc_t *md_ntsc;
-sms_ntsc_t *sms_ntsc;
-
 uint32_t *frame_buffer;
 int16_t *sound_frame;
 
