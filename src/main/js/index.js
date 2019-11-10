@@ -39,6 +39,56 @@ let audio_r;
 let scheduledSoundTime = 0;
 let delaySoundTime = SAMPLING_PER_FPS * DELAY_SOUND_FRAME / SOUND_FREQUENCY;
 
+// for iOS
+let isSafari = false;
+
+const message = function(mes) {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.font = "24px monospace";
+    canvasContext.fillStyle = "#fff";
+    canvasContext.fillText(mes, 250, 250);
+    canvasContext.font = "12px monospace";
+    canvasContext.fillStyle = "#0f0";
+};
+
+// canvas setting
+(function() {
+    canvas = document.getElementById('screen');
+    canvas.setAttribute('width', CANVAS_WIDTH);
+    canvas.setAttribute('height', CANVAS_HEIGHT);
+    let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
+    if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
+        canvas.style.width = CANVAS_WIDTH + "px";
+        canvas.style.heigth = CANVAS_HEIGHT + "px";
+    }
+    canvasContext = canvas.getContext('2d');
+    canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+    // for iOS audio context
+    let click = function() {
+        canvas.removeEventListener('click', click, false);
+        // audio init
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({
+            sampleRate: SOUND_FREQUENCY
+        });
+        // for iOS dummy audio
+        let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
+        let dummy = new Float32Array(SAMPLING_PER_FPS);
+        dummy.fill(0);
+        audioBuffer.getChannelData(0).set(dummy);
+        audioBuffer.getChannelData(1).set(dummy);
+        sound(audioBuffer);
+        // start
+        start();
+    };
+    canvas.addEventListener('click', click, false);
+    // start screen
+    message("NOW LOADING");
+    // for fps print
+    fps = 0;
+    frame = 0;
+    startTime = new Date().getTime();
+})();
+
 wasm().then(function(module) {
     gens = module;
     // memory allocate
@@ -50,6 +100,7 @@ wasm().then(function(module) {
         // create buffer from wasm
         romdata = new Uint8Array(gens.HEAPU8.buffer, gens._get_rom_buffer_ref(bytes.byteLength), bytes.byteLength);
         romdata.set(new Uint8Array(bytes));
+        message("TOUCH HERE!");
         initialized = true;
     });
 });
@@ -66,6 +117,11 @@ const start = function() {
     audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), SAMPLING_PER_FPS);
     // input
     input = new Float32Array(gens.HEAPF32.buffer, gens._get_input_buffer_ref(), GAMEPAD_API_INDEX);
+    // iOS
+    let ua = navigator.userAgent
+    if(ua.match(/Safari/) && !ua.match(/Chrome/) && !ua.match(/Edge/)) {
+        isSafari = true;
+    }
     // game loop
     then = Date.now();
     loop();
@@ -77,8 +133,14 @@ const keyscan = function() {
     if(gamepads.length == 0) return;
     let gamepad = gamepads[0];
     if(gamepad == null) return;
-    // for Microsoft XBOX ONE
-    if(gamepad.id.match(/Microsoft/)) {
+    if(isSafari) {
+        // for iOS Microsoft XBOX ONE
+        // UP - DOWN
+        input[7] = gamepad.axes[5] * -1;
+        // LEFT - RIGHT
+        input[6] = gamepad.axes[4];
+    } else if(gamepad.id.match(/Microsoft/)) {
+        // for Microsoft XBOX ONE
         // axes 0 - 7
         gamepad.axes.forEach((value, index) => {
             input[index] = value;
@@ -145,45 +207,3 @@ const loop = function() {
         canvasContext.fillText("FPS " + fps, 0, 480 - 16);
     }
 };
-
-// canvas setting
-(function() {
-    canvas = document.getElementById('screen');
-    canvas.setAttribute('width', CANVAS_WIDTH);
-    canvas.setAttribute('height', CANVAS_HEIGHT);
-    let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
-    if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
-        canvas.style.width = CANVAS_WIDTH + "px";
-        canvas.style.heigth = CANVAS_HEIGHT + "px";
-    }
-    canvasContext = canvas.getContext('2d');
-    canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-    // for iOS audio context
-    let click = function() {
-        canvas.removeEventListener('click', click, false);
-        // audio init
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({
-            sampleRate: SOUND_FREQUENCY
-        });
-        // for iOS dummy audio
-        let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
-        let dummy = new Float32Array(SAMPLING_PER_FPS);
-        dummy.fill(0);
-        audioBuffer.getChannelData(0).set(dummy);
-        audioBuffer.getChannelData(1).set(dummy);
-        sound(audioBuffer);
-        // start
-        start();
-    };
-    canvas.addEventListener('click', click, false);
-    // start screen
-    canvasContext.font = "24px monospace";
-    canvasContext.fillStyle = "#fff";
-    canvasContext.fillText("TOUCH HERE!", 250, 250);
-    // for fps print
-    canvasContext.font = "12px monospace";
-    canvasContext.fillStyle = "#0f0";
-    fps = 0;
-    frame = 0;
-    startTime = new Date().getTime();
-})();
