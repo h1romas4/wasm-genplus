@@ -89,7 +89,15 @@ const keyscan = function() {
         // LEFT - RIGHT
         input[6] = gamepad.axes[0];
     }
-    // button 0 - 10
+    // GamePadAPI   MEGADRIVE
+    // input[8 + 2] INPUT_A;
+    // input[8 + 3] INPUT_B;
+    // input[8 + 1] INPUT_C;
+    // input[8 + 7] INPUT_START;
+    // input[8 + 0] INPUT_X;
+    // input[8 + 4] INPUT_Y;
+    // input[8 + 5] INPUT_Z;
+    // input[8 + 6] INPUT_MODE;
     gamepad.buttons.forEach((button, index) => {
         input[index + 8] = button.value;
     });
