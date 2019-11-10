@@ -123,7 +123,7 @@ const loop = function() {
             frame = 0;
             startTime = new Date().getTime();
         }
-        canvasContext.fillText("fps: " + fps, 0, 480 - 16);
+        canvasContext.fillText("FPS " + fps, 0, 480 - 16);
     }
 };
 
