@@ -64,10 +64,6 @@ const start = function() {
     // audio view
     audio_l = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_l_ref(), SAMPLING_PER_FPS);
     audio_r = new Float32Array(gens.HEAPF32.buffer, gens._get_web_audio_r_ref(), SAMPLING_PER_FPS);
-    // audio init
-    audioContext = new (window.AudioContext || window.webkitAudioContext)({
-        sampleRate: SOUND_FREQUENCY
-    });
     // input
     input = new Float32Array(gens.HEAPF32.buffer, gens._get_input_buffer_ref(), GAMEPAD_API_INDEX);
     // game loop
@@ -147,13 +143,25 @@ const loop = function() {
     }
     canvasContext = canvas.getContext('2d');
     canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-    canvas.addEventListener('click', (function() {
-        return function f() {
-            canvas.removeEventListener('click', f, false);
-            start();
-        }
-    })(), false);
-    // hit any key for audio context
+    // for iOS audio context
+    let click = function() {
+        canvas.removeEventListener('click', click, false);
+        // audio init
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({
+            sampleRate: SOUND_FREQUENCY
+        });
+        // for iOS dummy audio
+        let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
+        let dummy = new Float32Array(SAMPLING_PER_FPS);
+        dummy.fill(0);
+        audioBuffer.getChannelData(0).set(dummy);
+        audioBuffer.getChannelData(1).set(dummy);
+        sound(audioBuffer);
+        // start
+        start();
+    };
+    canvas.addEventListener('click', click, false);
+    // start screen
     canvasContext.font = "24px monospace";
     canvasContext.fillStyle = "#fff";
     canvasContext.fillText("TOUCH HERE!", 250, 250);
