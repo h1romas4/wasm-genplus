@@ -1239,11 +1239,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 7978832,
+    STACK_BASE = 7978752,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 2735952,
-    DYNAMIC_BASE = 7978832,
-    DYNAMICTOP_PTR = 2735792;
+    STACK_MAX = 2735872,
+    DYNAMIC_BASE = 7978752,
+    DYNAMICTOP_PTR = 2735712;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1752,40 +1752,13 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  689876: function($0) {console.log('rom_buffer: ' + $0.toString(16));},  
- 689927: function($0) {console.log('rom_size: ' + $0);}
+  
 };
 
-// Avoid creating a new array
-var _readAsmConstArgsArray = [];
-
-function readAsmConstArgs(sigPtr, buf) {
-  var args = _readAsmConstArgsArray;
-  args.length = 0;
-  while (1) {
-    var ch = HEAPU8[sigPtr++];
-    if (!ch) return args;
-    if (ch === 'd'.charCodeAt(0) || ch === 'f'.charCodeAt(0)) {
-      buf = alignMemory(buf, 8);
-      args.push(HEAPF64[(buf >> 3)]);
-      buf += 8;
-    } else if (ch === 'i'.charCodeAt(0)) {
-      buf = alignMemory(buf, 4);
-      args.push(HEAP32[(buf >> 2)]);
-      buf += 4;
-    } else abort("unexpected char in asm const signature " + ch);
-  }
-}
-
-
-function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
-  var args = readAsmConstArgs(sigPtr, argbuf);
-  return ASM_CONSTS[code].apply(null, args);
-}
 
 
 
-// STATICTOP = STATIC_BASE + 2734928;
+// STATICTOP = STATIC_BASE + 2734848;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4443,7 +4416,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 2735792;
+      return 2735712;
     }
 
   
@@ -4787,7 +4760,7 @@ function intArrayToString(array) {
 // ASM_LIBRARY EXTERN PRIMITIVES: Int8Array,Int32Array
 
 var asmGlobalArg = {};
-var asmLibraryArg = { "__lock": ___lock, "__syscall221": ___syscall221, "__syscall5": ___syscall5, "__syscall54": ___syscall54, "__unlock": ___unlock, "abort": _abort, "abs": _abs, "emscripten_asm_const_iii": _emscripten_asm_const_iii, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_longjmp": _emscripten_longjmp, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "fd_close": _fd_close, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "getTempRet0": _getTempRet0, "invoke_i": invoke_i, "invoke_v": invoke_v, "memory": wasmMemory, "saveSetjmp": _saveSetjmp, "setTempRet0": _setTempRet0, "table": wasmTable, "testSetjmp": _testSetjmp };
+var asmLibraryArg = { "__lock": ___lock, "__syscall221": ___syscall221, "__syscall5": ___syscall5, "__syscall54": ___syscall54, "__unlock": ___unlock, "abort": _abort, "abs": _abs, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_longjmp": _emscripten_longjmp, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "fd_close": _fd_close, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "getTempRet0": _getTempRet0, "invoke_i": invoke_i, "invoke_v": invoke_v, "memory": wasmMemory, "saveSetjmp": _saveSetjmp, "setTempRet0": _setTempRet0, "table": wasmTable, "testSetjmp": _testSetjmp };
 var asm = createWasm();
 var real____wasm_call_ctors = asm["__wasm_call_ctors"];
 asm["__wasm_call_ctors"] = function() {
