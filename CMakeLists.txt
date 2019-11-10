@@ -75,11 +75,7 @@ add_compile_flags(C
     -Wno-sign-compare
     -DLSB_FIRST
     -DUSE_32BPP_RENDERING
-    -DHAVE_ALLOCA_H
     -DHAVE_YM3438_CORE
-    -DUSE_DYNAMIC_ALLOC
-    -DALT_RENDERER
-    -DALIGN_LONG
     -DWASM_GENPLUS
 )
 
@@ -87,6 +83,7 @@ add_compile_flags(LD
     "-s DEMANGLE_SUPPORT=1"
     "-s ALLOW_MEMORY_GROWTH=1"
     "-s MODULARIZE=1"
+    "-s TOTAL_MEMORY=32MB"
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../src/main/js)
