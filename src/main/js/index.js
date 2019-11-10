@@ -52,10 +52,6 @@ wasm().then(function(module) {
 
 const start = function() {
     if(!initialized) return;
-    canvas.removeEventListener('click', start, false);
-    canvas.addEventListener('click', function() {
-        pause = !pause;
-    }, false);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // emulator start
     gens._start();
@@ -132,9 +128,14 @@ const loop = function() {
     }
     canvasContext = canvas.getContext('2d');
     canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-    canvas.addEventListener('click', start, false);
+    canvas.addEventListener('click', (function() {
+        return function f() {
+            canvas.removeEventListener('click', f, false);
+            start();
+        }
+    })(), false);
     // hit any key for audio context
     canvasContext.font = "24px monospace";
     canvasContext.fillStyle = "#fff";
-    canvasContext.fillText("HIT ANY KEY", 250, 250);
+    canvasContext.fillText("TOUCH HERE!", 250, 250);
 })();
