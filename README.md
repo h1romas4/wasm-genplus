@@ -63,6 +63,10 @@ const ROM_PATH = './roms/sonic2.bin';
 http://localhost:9000
 ```
 
+# License
+
+[Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt) License
+
 # Thanks!
 
 [Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX)
