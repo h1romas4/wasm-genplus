@@ -1,6 +1,5 @@
 import wasm from './genplus.js';
 import './genplus.wasm';
-import BufferQueueNode from 'web-audio-buffer-queue'
 
 const ROM_PATH = './roms/sonic2.bin';
 const CANVAS_WIDTH = 640;
@@ -33,10 +32,12 @@ let fps;
 let frame;
 
 // audio member
+const DELAY_SOUND_FRAME = 10;
 let audioContext;
-let bufferQueueNode;
 let audio_l;
 let audio_r;
+let scheduledSoundTime = 0;
+let delaySoundTime = SAMPLING_PER_FPS * DELAY_SOUND_FRAME / SOUND_FREQUENCY;
 
 wasm().then(function(module) {
     gens = module;
@@ -67,13 +68,6 @@ const start = function() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)({
         sampleRate: SOUND_FREQUENCY
     });
-    bufferQueueNode = new BufferQueueNode({
-        audioContext: audioContext,
-        objectMode: true,
-        channels: 2,
-        bufferSize: 2048
-    });
-    bufferQueueNode.connect(audioContext.destination);
     // input
     input = new Float32Array(gens.HEAPF32.buffer, gens._get_input_buffer_ref(), GAMEPAD_API_INDEX);
     // game loop
@@ -98,6 +92,20 @@ const keyscan = function() {
     });
 };
 
+const sound = function(audioBuffer) {
+    let currentSoundTime = audioContext.currentTime;
+    let source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioContext.destination);
+    if(currentSoundTime < scheduledSoundTime) {
+        source.start(scheduledSoundTime);
+        scheduledSoundTime += audioBuffer.duration;
+    } else {
+        source.start(currentSoundTime);
+        scheduledSoundTime = currentSoundTime + audioBuffer.duration + delaySoundTime;
+    }
+};
+
 const loop = function() {
     requestAnimationFrame(loop);
     now = Date.now();
@@ -112,7 +120,7 @@ const loop = function() {
         let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
         audioBuffer.getChannelData(0).set(audio_l);
         audioBuffer.getChannelData(1).set(audio_r);
-        bufferQueueNode.write(audioBuffer);
+        sound(audioBuffer);
         // draw
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
