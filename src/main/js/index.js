@@ -28,6 +28,9 @@ const INTERVAL = 1000 / FPS;
 let now;
 let then;
 let delta;
+let startTime;
+let fps;
+let frame;
 
 // audio member
 let audioContext;
@@ -68,7 +71,7 @@ const start = function() {
         audioContext: audioContext,
         objectMode: true,
         channels: 2,
-        bufferSize: 512
+        bufferSize: 2048
     });
     bufferQueueNode.connect(audioContext.destination);
     // input
@@ -113,6 +116,14 @@ const loop = function() {
         // draw
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
+        // show fps
+        frame++;
+        if(new Date().getTime() - startTime >= 1000) {
+            fps = frame;
+            frame = 0;
+            startTime = new Date().getTime();
+        }
+        canvasContext.fillText("fps: " + fps, 0, 480 - 16);
     }
 };
 
@@ -138,4 +149,10 @@ const loop = function() {
     canvasContext.font = "24px monospace";
     canvasContext.fillStyle = "#fff";
     canvasContext.fillText("TOUCH HERE!", 250, 250);
+    // for fps print
+    canvasContext.font = "12px monospace";
+    canvasContext.fillStyle = "#0f0";
+    fps = 0;
+    frame = 0;
+    startTime = new Date().getTime();
 })();
