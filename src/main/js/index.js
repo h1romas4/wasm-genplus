@@ -78,10 +78,17 @@ const keyscan = function() {
     let gamepad = gamepads[0];
     if(gamepad == null) return;
     // for Microsoft XBOX ONE
-    // axes 0 - 7
-    gamepad.axes.forEach((value, index) => {
-        input[index] = value;
-    });
+    if(gamepad.id.match(/Microsoft/)) {
+        // axes 0 - 7
+        gamepad.axes.forEach((value, index) => {
+            input[index] = value;
+        });
+    } else {
+        // UP - DOWN
+        input[7] = gamepad.axes[1];
+        // LEFT - RIGHT
+        input[6] = gamepad.axes[0];
+    }
     // button 0 - 10
     gamepad.buttons.forEach((button, index) => {
         input[index + 8] = button.value;
