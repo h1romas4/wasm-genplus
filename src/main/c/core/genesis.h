@@ -50,9 +50,7 @@
 typedef union
 {
   md_cart_t md_cart;
-#ifndef MAIXDUINO
   cd_hw_t cd_hw;
-#endif
 } external_t;
 
 /* Global variables */

@@ -44,7 +44,7 @@ wasm().then(function(module) {
     fetch(ROM_PATH).then(response => response.arrayBuffer())
     .then(bytes => {
         // create buffer from wasm
-        romdata = new Uint8Array(gens.HEAPU8.buffer, gens._get_rom_buffer_ref(), bytes.byteLength);
+        romdata = new Uint8Array(gens.HEAPU8.buffer, gens._get_rom_buffer_ref(bytes.byteLength), bytes.byteLength);
         romdata.set(new Uint8Array(bytes));
         initialized = true;
     });

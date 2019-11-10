@@ -130,7 +130,6 @@ void audio_set_rate(int samplerate, double framerate)
   /* resampled to desired rate at the end of each frame, using Blip Buffer.            */
   blip_set_rates(snd.blips[0], mclk, samplerate);
 
-#ifndef MAIXDUINO
   /* Mega CD sound hardware */
   if (system_hw == SYSTEM_MCD)
   {
@@ -143,7 +142,6 @@ void audio_set_rate(int samplerate, double framerate)
     /* CDD core */
     cdd_init(samplerate);
   }
-#endif
 
   /* Reinitialize internal rates */
   snd.sample_rate = samplerate;
@@ -197,7 +195,6 @@ int audio_update(int16 *buffer)
   /* run sound chips until end of frame */
   int size = sound_update(mcycles_vdp);
 
-#ifndef MAIXDUINO
   /* Mega CD specific */
   if (system_hw == SYSTEM_MCD)
   {
@@ -216,7 +213,6 @@ int audio_update(int16 *buffer)
     blip_mix_samples(snd.blips[0], snd.blips[1], snd.blips[2], buffer, size);
   }
   else
-#endif
   {
 #ifdef ALIGN_SND
     /* return an aligned number of samples if required */
@@ -674,9 +670,7 @@ void system_frame_scd(int do_skip)
 
   /* reset frame cycle counter */
   mcycles_vdp = 0;
-#ifndef MAIXDUINO
   scd.cycles = 0;
-#endif
 
   /* reset VDP FIFO */
   fifo_write_cnt = 0;
@@ -828,10 +822,8 @@ void system_frame_scd(int do_skip)
     Z80.irq_state = ASSERT_LINE;
   }
 
-#ifndef MAIXDUINO
   /* run both 68k & CD hardware until end of line */
   scd_update(MCYCLES_PER_LINE);
-#endif
 
   /* run Z80 until end of line */
   if (zstate == 1)
@@ -867,10 +859,8 @@ void system_frame_scd(int do_skip)
     /* update 6-Buttons & Lightguns */
     input_refresh();
 
-#ifndef MAIXDUINO
     /* run both 68k & CD hardware until end of line */
     scd_update(mcycles_vdp + MCYCLES_PER_LINE);
-#endif
 
     /* run Z80 until end of line */
     if (zstate == 1)
@@ -913,10 +903,8 @@ void system_frame_scd(int do_skip)
   /* update 6-Buttons & Lightguns */
   input_refresh();
 
-#ifndef MAIXDUINO
   /* run both 68k & CD hardware until end of line */
   scd_update(mcycles_vdp + MCYCLES_PER_LINE);
-#endif
 
   /* run Z80 until end of line */
   if (zstate == 1)
@@ -971,10 +959,8 @@ void system_frame_scd(int do_skip)
       h_counter--;
     }
 
-#ifndef MAIXDUINO
     /* run both 68k & CD hardware until end of line */
     scd_update(mcycles_vdp + MCYCLES_PER_LINE);
-#endif
 
     /* run Z80 until end of line */
     if (zstate == 1)
@@ -995,9 +981,7 @@ void system_frame_scd(int do_skip)
   }
 
   /* adjust timings for next frame */
-#ifndef MAIXDUINO
   scd_end_frame(scd.cycles);
-#endif
   input_end_frame(mcycles_vdp);
   m68k.cycles -= mcycles_vdp;
   Z80.cycles -= mcycles_vdp;

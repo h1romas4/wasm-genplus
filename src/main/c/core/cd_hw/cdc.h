@@ -38,8 +38,6 @@
 #ifndef _HW_CDC_
 #define _HW_CDC_
 
-#ifndef MAIXDUINO
-
 #define cdc scd.cdc_hw
 
 /* CDC hardware */
@@ -69,7 +67,5 @@ extern void cdc_decoder_update(uint32 header);
 extern void cdc_reg_w(unsigned char data);
 extern unsigned char cdc_reg_r(void);
 extern unsigned short cdc_host_r(void);
-
-#endif
 
 #endif

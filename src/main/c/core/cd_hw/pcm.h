@@ -38,8 +38,6 @@
 #ifndef _CD_PCM_
 #define _CD_PCM_
 
-#ifndef MAIXDUINO
-
 #include "blip_buf.h"
 
 /* PCM channel */
@@ -75,7 +73,5 @@ extern void pcm_update(unsigned int samples);
 extern void pcm_write(unsigned int address, unsigned char data);
 extern unsigned char pcm_read(unsigned int address);
 extern void pcm_ram_dma_w(unsigned int words);
-
-#endif
 
 #endif

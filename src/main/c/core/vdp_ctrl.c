@@ -800,7 +800,6 @@ void vdp_68k_ctrl_w(unsigned int data)
             /* DMA source address */
             dma_src = (reg[22] << 8) | reg[21];
 
-#ifndef MAIXDUINO
             /* Transfer from SVP ROM/RAM ($000000-$3fffff) or CD Word-RAM ($200000-$3fffff/$600000-$7fffff) */
             if (((system_hw == SYSTEM_MCD) && ((reg[23] & 0x70) == ((scd.cartridge.boot >> 1) + 0x10))) || (svp && !(reg[23] & 0x60)))
             {
@@ -810,7 +809,6 @@ void vdp_68k_ctrl_w(unsigned int data)
               addr += reg[15];
               dma_length--;
             }
-#endif
 
             /* Trigger DMA */
             vdp_dma_update(m68k.cycles);

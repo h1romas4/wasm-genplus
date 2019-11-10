@@ -36,8 +36,6 @@
  *
  ****************************************************************************************/
  
-#ifndef MAIXDUINO
-
  /* CD compatible ROM/RAM cartridge */
 typedef struct 
 {
@@ -50,5 +48,3 @@ typedef struct
 
 /* Function prototypes */
 extern void cd_cart_init(void);
-
-#endif

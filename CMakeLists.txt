@@ -8,6 +8,7 @@ header_directories(./src/main/c)
 add_source_files(
     ./src/main/c/core/z80/z80.c
     ./src/main/c/core/m68k/m68kcpu.c
+    ./src/main/c/core/m68k/s68kcpu.c
     ./src/main/c/core/genesis.c
     ./src/main/c/core/vdp_ctrl.c
     ./src/main/c/core/vdp_render.c
@@ -46,6 +47,12 @@ add_source_files(
     ./src/main/c/core/cart_hw/eeprom_spi.c
     ./src/main/c/core/cart_hw/md_cart.c
     ./src/main/c/core/cart_hw/sms_cart.c
+    ./src/main/c/core/cd_hw/cd_cart.c
+    ./src/main/c/core/cd_hw/cdc.c
+    ./src/main/c/core/cd_hw/cdd.c
+    ./src/main/c/core/cd_hw/gfx.c
+    ./src/main/c/core/cd_hw/pcm.c
+    ./src/main/c/core/cd_hw/scd.c
     ./src/main/c/core/ntsc/sms_ntsc.c
     ./src/main/c/core/ntsc/md_ntsc.c
     ./src/main/c/wasm/config.c
@@ -57,7 +64,7 @@ add_source_files(
 
 # source map option (but not working)
 #    -g4
-#    --source-map-base src/main/c
+#    --source-map-base ./
 
 add_compile_flags(C
     -std=gnu11
@@ -68,13 +75,12 @@ add_compile_flags(C
     -Wno-sign-compare
     -DLSB_FIRST
     -DUSE_32BPP_RENDERING
-    -DMAXROMSIZE=10485760
     -DHAVE_ALLOCA_H
     -DHAVE_YM3438_CORE
     -DUSE_DYNAMIC_ALLOC
     -DALT_RENDERER
     -DALIGN_LONG
-    -DMAIXDUINO
+    -DWASM_GENPLUS
 )
 
 add_compile_flags(LD

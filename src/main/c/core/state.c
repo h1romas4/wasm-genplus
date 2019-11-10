@@ -158,7 +158,6 @@ int state_load(unsigned char *state)
   load_param(&Z80, sizeof(Z80_Regs));
   Z80.irq_callback = z80_irq_callback;
 
-#ifndef MAIXDUINO
   /* Extra HW */
   if (system_hw == SYSTEM_MCD)
   {
@@ -177,9 +176,6 @@ int state_load(unsigned char *state)
     bufferptr += scd_context_load(&state[bufferptr]);
   }
   else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-#else
-  if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-#endif
   {  
     /* MD cartridge hardware */
     bufferptr += md_cart_context_load(&state[bufferptr]);
@@ -260,7 +256,6 @@ int state_save(unsigned char *state)
   /* Z80 */ 
   save_param(&Z80, sizeof(Z80_Regs));
 
-#ifndef MAIXDUINO
   /* External HW */
   if (system_hw == SYSTEM_MCD)
   {
@@ -273,9 +268,6 @@ int state_save(unsigned char *state)
     bufferptr += scd_context_save(&state[bufferptr]);
   }
   else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-#else
-  if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-#endif
   {
     /* MD cartridge hardware */
     bufferptr += md_cart_context_save(&state[bufferptr]);

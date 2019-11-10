@@ -156,7 +156,6 @@ void gen_init(void)
       z80_readport  = z80_unused_port_r;
     }
 
-#ifndef MAIXDUINO
     /* $000000-$7FFFFF : external hardware area */
     if (system_hw == SYSTEM_MCD)
     {
@@ -167,7 +166,6 @@ void gen_init(void)
       scd_init();
     }
     else
-#endif
     {
       /* Cartridge hardware */
       md_cart_init();
@@ -279,9 +277,7 @@ void gen_reset(int hard_reset)
       if (hard_reset)
       {
         /* reset CD hardware */
-#ifndef MAIXDUINO
         scd_reset(1);
-#endif
       }
     }
 

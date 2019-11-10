@@ -38,8 +38,6 @@
 #ifndef _CD_GFX_
 #define _CD_GFX_
 
-#ifndef MAIXDUINO
-
 #define gfx scd.gfx_hw
 
 typedef struct
@@ -114,7 +112,5 @@ extern int gfx_context_save(uint8 *state);
 extern int gfx_context_load(uint8 *state);
 extern void gfx_start(unsigned int base, int cycles);
 extern void gfx_update(int cycles);
-
-#endif
 
 #endif

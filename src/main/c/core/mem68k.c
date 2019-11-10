@@ -39,13 +39,6 @@
 
 #include "shared.h"
 
-#ifdef MAIXDUINO
-/* ~3184 SCD clocks/line on NTSC system (53.693175 MHz Master Clock) */
-/* ~3214 SCD clocks/line on PAL system (53.203424 MHz Master Clock) */
-#define SCD_CLOCK 50000000
-#define SCYCLES_PER_LINE (uint32) (MCYCLES_PER_LINE * ((float)SCD_CLOCK / (float)system_clock))
-#endif
-
 /*--------------------------------------------------------------------------*/
 /* Unused areas (return open bus data, i.e prefetched instruction word)     */
 /*--------------------------------------------------------------------------*/
@@ -270,7 +263,6 @@ static void m68k_poll_detect(unsigned int reg_mask)
   m68k.poll.pc = m68k.pc;
 }
 
-#ifndef MAIXDUINO
 static void m68k_poll_sync(unsigned int reg_mask)
 {
   /* relative SUB-CPU cycle counter */
@@ -305,7 +297,6 @@ static void m68k_poll_sync(unsigned int reg_mask)
   s68k.poll.detected &= ~reg_mask;
   m68k.poll.detected &= ~reg_mask;
 }
-#endif
 
 /*--------------------------------------------------------------------------*/
 /* I/O Control                                                              */
@@ -349,7 +340,6 @@ unsigned int ctrl_io_read_byte(unsigned int address)
 #ifdef LOG_SCD
       error("[%d][%d]read byte CD register %X (%X)\n", v_counter, m68k.cycles, address, m68k.pc);
 #endif
-#ifndef MAIXDUINO
       if (system_hw == SYSTEM_MCD)
       {
         /* register index ($A12000-A1203F mirrored up to $A120FF) */
@@ -403,7 +393,6 @@ unsigned int ctrl_io_read_byte(unsigned int address)
           return scd.regs[index >> 1].byte.h;
         }
       }
-#endif
 
       return m68k_read_bus_8(address); 
     }
@@ -505,7 +494,6 @@ unsigned int ctrl_io_read_word(unsigned int address)
 #ifdef LOG_SCD
       error("[%d][%d]read word CD register %X (%X)\n", v_counter, m68k.cycles, address, m68k.pc);
 #endif
-#ifndef MAIXDUINO
       if (system_hw == SYSTEM_MCD)
       {
         /* register index ($A12000-A1203F mirrored up to $A120FF) */
@@ -567,7 +555,6 @@ unsigned int ctrl_io_read_word(unsigned int address)
           return scd.regs[index >> 1].w;
         }
       }
-#endif
 
       /* invalid address */
       return m68k_read_bus_16(address); 
@@ -659,7 +646,6 @@ void ctrl_io_write_byte(unsigned int address, unsigned int data)
 #ifdef LOG_SCD
       error("[%d][%d]write byte CD register %X -> 0x%02X (%X)\n", v_counter, m68k.cycles, address, data, m68k.pc);
 #endif
-#ifndef MAIXDUINO
       if (system_hw == SYSTEM_MCD)
       {
         /* register index ($A12000-A1203F mirrored up to $A120FF) */
@@ -851,7 +837,6 @@ void ctrl_io_write_byte(unsigned int address, unsigned int data)
           }
         }
       }
-#endif
 
       m68k_unused_8_w(address, data);
       return;
@@ -924,7 +909,6 @@ void ctrl_io_write_word(unsigned int address, unsigned int data)
 #ifdef LOG_SCD
       error("[%d][%d]write word CD register %X -> 0x%04X (%X)\n", v_counter, m68k.cycles, address, data, m68k.pc);
 #endif
-#ifndef MAIXDUINO
       if (system_hw == SYSTEM_MCD)
       {
         /* register index ($A12000-A1203F mirrored up to $A120FF) */
@@ -1088,7 +1072,6 @@ void ctrl_io_write_word(unsigned int address, unsigned int data)
           }
         }
       }
-#endif
 
       m68k_unused_16_w (address, data);
       return;

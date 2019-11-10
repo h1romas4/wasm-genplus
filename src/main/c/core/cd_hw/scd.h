@@ -38,8 +38,6 @@
 #ifndef _HW_SCD_
 #define _HW_SCD_
 
-#ifndef MAIXDUINO
-
 #include "cdd.h"
 #include "cdc.h"
 #include "gfx.h"
@@ -93,7 +91,5 @@ extern int scd_context_load(uint8 *state);
 extern int scd_context_save(uint8 *state);
 extern int scd_68k_irq_ack(int level);
 extern void prg_ram_dma_w(unsigned int words);
-
-#endif
 
 #endif

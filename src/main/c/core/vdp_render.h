@@ -98,7 +98,7 @@
   *out++ = PIXEL(r,g,b); \
 }
 
-// RGB -> ABGR
+#ifdef WASM_GENPLUS
 #define CUSTOM_BLITTER(line, width, pixel, src)  \
 { \
     int w = width; \
@@ -119,6 +119,7 @@
     } \
     while (--width); \
 }
+#endif
 
 /* Global variables */
 extern uint16 spr_col;

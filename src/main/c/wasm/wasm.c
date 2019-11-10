@@ -111,7 +111,8 @@ int EMSCRIPTEN_KEEPALIVE wasm_input_update(void) {
     return 1;
 }
 
-uint8_t* EMSCRIPTEN_KEEPALIVE get_rom_buffer_ref(void) {
+uint8_t* EMSCRIPTEN_KEEPALIVE get_rom_buffer_ref(uint32_t size) {
+    rom_size = size;
     return rom_buffer;
 }
 
