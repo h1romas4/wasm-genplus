@@ -32,12 +32,12 @@ let fps;
 let frame;
 
 // audio member
-const DELAY_SOUND_FRAME = 10;
+const SOUND_DELAY_FRAME = 8;
 let audioContext;
 let audio_l;
 let audio_r;
-let scheduledSoundTime = 0;
-let delaySoundTime = SAMPLING_PER_FPS * DELAY_SOUND_FRAME / SOUND_FREQUENCY;
+let soundShedTime = 0;
+let soundDelayTime = SAMPLING_PER_FPS * SOUND_DELAY_FRAME / SOUND_FREQUENCY;
 
 // for iOS
 let isSafari = false;
@@ -85,7 +85,7 @@ const message = function(mes) {
     message("NOW LOADING");
     // for fps print
     fps = 0;
-    frame = 0;
+    frame = FPS;
     startTime = new Date().getTime();
 })();
 
@@ -166,16 +166,16 @@ const keyscan = function() {
 };
 
 const sound = function(audioBuffer) {
-    let currentSoundTime = audioContext.currentTime;
     let source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
     source.connect(audioContext.destination);
-    if(currentSoundTime < scheduledSoundTime) {
-        source.start(scheduledSoundTime);
-        scheduledSoundTime += audioBuffer.duration;
+    let currentSoundTime = audioContext.currentTime;
+    if(currentSoundTime < soundShedTime) {
+        source.start(soundShedTime);
+        soundShedTime += audioBuffer.duration;
     } else {
         source.start(currentSoundTime);
-        scheduledSoundTime = currentSoundTime + audioBuffer.duration + delaySoundTime;
+        soundShedTime = currentSoundTime + audioBuffer.duration + soundDelayTime;
     }
 };
 
@@ -197,12 +197,16 @@ const loop = function() {
         // draw
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
-        // show fps
+        // fps
         frame++;
         if(new Date().getTime() - startTime >= 1000) {
             fps = frame;
             frame = 0;
             startTime = new Date().getTime();
+        }
+        // sound hack
+        if(fps < FPS) {
+            soundShedTime = 0;
         }
         canvasContext.fillText("FPS " + fps, 0, 480 - 16);
     }
