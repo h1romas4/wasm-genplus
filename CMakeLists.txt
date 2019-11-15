@@ -67,6 +67,7 @@ add_source_files(
 #    --source-map-base ./
 
 add_compile_flags(C
+    -Oz
     -std=gnu11
     -fomit-frame-pointer
     -Wno-strict-aliasing
@@ -84,6 +85,7 @@ add_compile_flags(LD
     "-s ALLOW_MEMORY_GROWTH=1"
     "-s MODULARIZE=1"
     "-s TOTAL_MEMORY=32MB"
+    "-s FILESYSTEM=0"
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../src/main/js)
