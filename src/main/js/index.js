@@ -1,7 +1,7 @@
 import wasm from './genplus.js';
 import './genplus.wasm';
 
-const ROM_PATH = './roms/sonic2.bin';
+const ROM_PATH = './roms/bare_knukle_ii.bin';
 const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
@@ -188,12 +188,6 @@ const loop = function() {
         // update
         gens._tick();
         then = now - (delta % INTERVAL);
-        // sound
-        gens._sound();
-        let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
-        audioBuffer.getChannelData(0).set(audio_l);
-        audioBuffer.getChannelData(1).set(audio_r);
-        sound(audioBuffer);
         // draw
         canvasImageData.data.set(vram);
         canvasContext.putImageData(canvasImageData, 0, 0);
@@ -204,9 +198,16 @@ const loop = function() {
             frame = 0;
             startTime = new Date().getTime();
         }
+        // sound
+        gens._sound();
         // sound hack
         if(fps < FPS) {
             soundShedTime = 0;
+        } else {
+            let audioBuffer = audioContext.createBuffer(2, SAMPLING_PER_FPS, SOUND_FREQUENCY);
+            audioBuffer.getChannelData(0).set(audio_l);
+            audioBuffer.getChannelData(1).set(audio_r);
+            sound(audioBuffer);
         }
         canvasContext.fillText("FPS " + fps, 0, 480 - 16);
     }
