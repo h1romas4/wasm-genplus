@@ -59,6 +59,8 @@ const ROM_PATH = './roms/sonic2.bin';
 
 **Play**
 
+Firefox or Safari (recommended)
+
 ```
 http://localhost:9000
 ```
