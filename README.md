@@ -20,7 +20,7 @@ EMSDK = /home/hiromasa/toolchain/emsdk
 EM_CONFIG = /home/hiromasa/.emscripten
 EMSDK_NODE = /home/hiromasa/toolchain/emsdk/node/12.9.1_64bit/bin/node
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.0
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.6
 ```
 
 ## Build
@@ -65,10 +65,10 @@ Firefox or Safari (recommended)
 http://localhost:9000
 ```
 
-# License
+## License
 
 [Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt) License
 
-# Thanks!
+## Thanks!
 
 [Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX)
