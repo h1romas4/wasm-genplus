@@ -4,7 +4,7 @@
 
 ![](https://github.com/h1romas4/wasm-genplus/blob/master/assets/ipad-wasm.jpg)
 
-## Setup require
+## Require
 
 * [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
 
