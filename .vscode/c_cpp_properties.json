@@ -6,7 +6,12 @@
                 "${workspaceFolder}/src/main/c/**",
                 "~/toolchain/emsdk/upstream/**"
             ],
-            "defines": [],
+            "defines": [
+                "LSB_FIRST",
+                "USE_32BPP_RENDERING",
+                "HAVE_YM3438_CORE",
+                "WASM_GENPLUS=1"
+            ],
             "compilerPath": "~/toolchain/emsdk/upstream/emscripten/emcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
