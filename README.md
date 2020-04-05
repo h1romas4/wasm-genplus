@@ -1,5 +1,7 @@
 # wasm-genplus
 
+![](https://github.com/h1romas4/wasm-genplus/workflows/Emscripten%20CI/badge.svg)
+
 [Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX) WebAssembly porting
 
 ![](https://github.com/h1romas4/wasm-genplus/blob/master/assets/ipad-wasm.jpg)
@@ -27,8 +29,6 @@ clang version 11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-git
 ```
 
 ### Build
-
-![](https://github.com/h1romas4/wasm-genplus/workflows/Emscripten%20CI/badge.svg)
 
 **Emscripten**
 
