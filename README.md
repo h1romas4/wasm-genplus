@@ -4,41 +4,6 @@
 
 ![](https://github.com/h1romas4/wasm-genplus/blob/master/assets/ipad-wasm.jpg)
 
-## Build with Gitpod
-
-**Open in Gitpod**
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/h1romas4/wasm-genplus)
-
-**Gitpod terminal:**
-
-```
-mkdir build && cd build
-emcmake cmake ..
-emmake make
-```
-
-**ROM file**
-
-Drag and drop the .bin file
-
-```
-docs/roms/
-```
-
-Set path, src/main/js/index.js
-
-```
-const ROM_PATH = './roms/sonic2.bin';
-```
-
-**Play**
-
-```
-cd ..
-npm run server
-```
-
 ## Build with Local
 
 ### Require
@@ -103,6 +68,41 @@ const ROM_PATH = './roms/sonic2.bin';
 
 ```
 http://localhost:9000
+```
+
+## Build with Gitpod
+
+**Open in Gitpod**
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/h1romas4/wasm-genplus)
+
+**Gitpod terminal:**
+
+```
+mkdir build && cd build
+emcmake cmake ..
+emmake make
+```
+
+**ROM file**
+
+Drag and drop the .bin file
+
+```
+docs/roms/
+```
+
+Set path, src/main/js/index.js
+
+```
+const ROM_PATH = './roms/sonic2.bin';
+```
+
+**Play**
+
+```
+cd ..
+npm run server
 ```
 
 ## License
