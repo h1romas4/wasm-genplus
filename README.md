@@ -105,6 +105,8 @@ cd ..
 npm run server
 ```
 
+![](https://github.com/h1romas4/wasm-genplus/blob/master/assets/gitpod-01.jpg)
+
 ## License
 
 [Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt) License
