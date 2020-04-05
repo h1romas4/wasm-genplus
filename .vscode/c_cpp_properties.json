@@ -4,7 +4,7 @@
             "name": "emcc",
             "includePath": [
                 "${workspaceFolder}/src/main/c/**",
-                "~/toolchain/emsdk/upstream/**"
+                "${env:EMSDK}/upstream/**"
             ],
             "defines": [
                 "LSB_FIRST",
@@ -12,7 +12,7 @@
                 "HAVE_YM3438_CORE",
                 "WASM_GENPLUS=1"
             ],
-            "compilerPath": "~/toolchain/emsdk/upstream/emscripten/emcc",
+            "compilerPath": "${env:EMSDK}/upstream/emscripten/emcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
