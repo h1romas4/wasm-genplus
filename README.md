@@ -4,7 +4,44 @@
 
 ![](https://github.com/h1romas4/wasm-genplus/blob/master/assets/ipad-wasm.jpg)
 
-## Require
+## Build with Gitpod
+
+**Open in Gitpod**
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/h1romas4/wasm-genplus)
+
+**Gitpod terminal:**
+
+```
+mkdir build && cd build
+emcmake cmake ..
+emmake make
+```
+
+**ROM file**
+
+Drag and drop the .bin file
+
+```
+docs/roms/
+```
+
+Set path, src/main/js/index.js
+
+```
+const ROM_PATH = './roms/sonic2.bin';
+```
+
+**Play**
+
+```
+cd ..
+npm run server
+```
+
+## Build with Local
+
+### Require
 
 * [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
 
@@ -24,7 +61,7 @@ emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.11
 clang version 11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project baa6f6a7828a46c37b96227282938717220f8b34)
 ```
 
-## Build
+### Build
 
 ![](https://github.com/h1romas4/wasm-genplus/workflows/Emscripten%20CI/badge.svg)
 
@@ -38,7 +75,7 @@ emcmake cmake ..
 emmake make
 ```
 
-**Webpack**
+**webpack**
 
 ```
 cd ..
@@ -48,19 +85,21 @@ npm run server
 
 **ROM file**
 
-Put in
+Deploy the .bin file
+
 ```
 docs/roms
 ```
 
-src/main/js/index.js
+Set path, src/main/js/index.js
+
 ```
 const ROM_PATH = './roms/sonic2.bin';
 ```
 
 **Play**
 
-Firefox or Safari (recommended)
+(recommended) Firefox or Safari
 
 ```
 http://localhost:9000

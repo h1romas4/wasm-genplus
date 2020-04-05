@@ -1,0 +1,6 @@
+image: gitpod/workspace-wasm
+tasks:
+  - init: npm install
+ports:
+  - port: 9000
+    onOpen: open-preview
