@@ -20,7 +20,8 @@ EMSDK = /home/hiromasa/toolchain/emsdk
 EM_CONFIG = /home/hiromasa/.emscripten
 EMSDK_NODE = /home/hiromasa/toolchain/emsdk/node/12.9.1_64bit/bin/node
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.6
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.11
+clang version 11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project baa6f6a7828a46c37b96227282938717220f8b34)
 ```
 
 ## Build
