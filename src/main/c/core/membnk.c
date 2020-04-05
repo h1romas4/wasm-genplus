@@ -3,7 +3,7 @@
  *  Z80 bank access to 68k bus
  *
  *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2016  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -230,12 +230,12 @@ unsigned int zbank_read_vdp(unsigned int address)
     {
       return (vdp_68k_data_r() >> 8);
     }
-
+      
     case 0x01:    /* DATA */
     {
       return (vdp_68k_data_r() & 0xFF);
     }
-
+      
     case 0x04:    /* CTRL */
     {
       return (((vdp_68k_ctrl_r(Z80.cycles) >> 8) & 3) | 0xFC);
@@ -245,7 +245,7 @@ unsigned int zbank_read_vdp(unsigned int address)
     {
       return (vdp_68k_ctrl_r(Z80.cycles) & 0xFF);
     }
-
+      
     case 0x08:    /* HVC */
     case 0x0C:
     {
@@ -300,7 +300,7 @@ void zbank_write_vdp(unsigned int address, unsigned int data)
       zbank_unused_w(address, data);
       return;
     }
-
+             
     case 0x18: /* Unused */
     {
       zbank_unused_w(address, data);

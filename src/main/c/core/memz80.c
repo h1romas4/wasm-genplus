@@ -5,7 +5,7 @@
  *  Support for SG-1000, Mark-III, Master System, Game Gear & Mega Drive ports access
  *
  *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2016  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -40,6 +40,7 @@
  ****************************************************************************************/
 
 #include "shared.h"
+
 
 /*--------------------------------------------------------------------------*/
 /*  Handlers for access to unused addresses and those which make the        */
@@ -110,13 +111,18 @@ unsigned char z80_memory_r(unsigned int address)
     {
       if ((address >> 8) == 0x7F)
       {
+        /* average Z80 wait-states when accessing 68k area */
+        Z80.cycles += 3 * 15;
         return (*zbank_memory_map[0xc0].read)(address);
       }
       return z80_unused_r(address);
     }
-
+      
     default: /* $8000-$FFFF: 68k bank (32K) */
     {
+      /* average Z80 wait-states when accessing 68k area */
+      Z80.cycles += 3 * 15;
+
       address = zbank | (address & 0x7FFF);
       if (zbank_memory_map[address >> 16].read)
       {
@@ -133,7 +139,7 @@ void z80_memory_w(unsigned int address, unsigned char data)
   switch((address >> 13) & 7)
   {
     case 0: /* $0000-$3FFF: Z80 RAM (8K mirrored) */
-    case 1:
+    case 1: 
     {
       zram[address & 0x1FFF] = data;
       return;
@@ -157,6 +163,8 @@ void z80_memory_w(unsigned int address, unsigned char data)
 
         case 0x7F: /* $7F00-$7FFF: VDP */
         {
+          /* average Z80 wait-states when accessing 68k area */
+          Z80.cycles += 3 * 15;
           (*zbank_memory_map[0xc0].write)(address, data);
           return;
         }
@@ -171,6 +179,9 @@ void z80_memory_w(unsigned int address, unsigned char data)
 
     default: /* $8000-$FFFF: 68k bank (32K) */
     {
+      /* average Z80 wait-states when accessing 68k area */
+      Z80.cycles += 3 * 15;
+
       address = zbank | (address & 0x7FFF);
       if (zbank_memory_map[address >> 16].write)
       {
@@ -299,7 +310,7 @@ unsigned char z80_md_port_r(unsigned int port)
       /* read FM chip if enabled */
       if ((port >= 0xF0) && (config.ym2413 & 1))
       {
-        return YM2413Read();
+        return fm_read(Z80.cycles, port);
       }
 
       return z80_unused_port_r(port);
@@ -577,7 +588,7 @@ unsigned char z80_ms_port_r(unsigned int port)
         /* read FM board if enabled */
         if (!(port & 4) && (config.ym2413 & 1))
         {
-          data = YM2413Read();
+          data = fm_read(Z80.cycles, port);
         }
 
         /* read I/O ports if enabled */
@@ -677,7 +688,7 @@ unsigned char z80_m3_port_r(unsigned int port)
       if (!(port & 4) && (config.ym2413 & 1))
       {
         /* I/O ports are automatically disabled by hardware */
-        return YM2413Read();
+        return fm_read(Z80.cycles, port);
       }
 
       /* read I/O ports   */

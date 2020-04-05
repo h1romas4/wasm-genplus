@@ -1,8 +1,8 @@
 /***************************************************************************************
  *  Genesis Plus
- *  CD data controller (LC89510 compatible)
+ *  CD data controller (LC8951x compatible)
  *
- *  Copyright (C) 2012-2015  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2012-2019  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -51,7 +51,6 @@
 
 /* CTRL0 register bitmasks */
 #define BIT_DECEN   0x80
-#define BIT_E01RQ   0x20
 #define BIT_AUTORQ  0x10
 #define BIT_WRRQ    0x04
 
@@ -60,7 +59,7 @@
 #define BIT_FORMRQ  0x04
 #define BIT_SHDREN  0x01
 
-/* CTRL2 register bitmask */
+/* STAT3 register bitmask */
 #define BIT_VALST   0x80
 
 /* TODO: figure exact DMA transfer rate */
@@ -248,7 +247,7 @@ void cdc_decoder_update(uint32 header)
   /* data decoding enabled ? */
   if (cdc.ctrl[0] & BIT_DECEN)
   {
-    /* update HEAD registers */
+    /* update HEADx registers with current block header */
     *(uint32 *)(cdc.head[0]) = header;
 
     /* set !VALST */
@@ -285,18 +284,50 @@ void cdc_decoder_update(uint32 header)
       /* CDC buffer address */
       offset = cdc.pt.w & 0x3fff;
 
-      /* write CDD block header (4 bytes) */
+      /* write current block header to RAM buffer (4 bytes) */
       *(uint32 *)(cdc.ram + offset) = header;
+      offset += 4;
 
-      /* write CDD block data (2048 bytes) */
-      cdd_read_data(cdc.ram + 4 + offset);
+      /* check decoded block mode */
+      if (cdc.head[0][3] == 0x01)
+      {
+        /* write Mode 1 user data to RAM buffer (2048 bytes) */
+        cdd_read_data(cdc.ram + offset, NULL);
+        offset += 2048;
+      }
+      else
+      {
+        /* check if CD-ROM Mode 2 decoding is enabled */
+        if (cdc.ctrl[1] & BIT_MODRQ)
+        {
+          /* update HEADx registers with current block sub-header & write Mode 2 user data to RAM buffer (max 2328 bytes) */
+          cdd_read_data(cdc.ram + offset + 8, cdc.head[1]);
+
+          /* write current block sub-header to RAM buffer (4 bytes x 2) */
+          *(uint32 *)(cdc.ram + offset) = *(uint32 *)(cdc.head[1]);
+          *(uint32 *)(cdc.ram + offset + 4) = *(uint32 *)(cdc.head[1]);
+          offset += 2336;
+        }
+        else
+        {
+          /* update HEADx registers with current block sub-header & write Mode 2 user data to RAM buffer (max 2328 bytes) */
+          /* NB: when Mode 2 decoding is disabled, sub-header is apparently not written to RAM buffer (required by Wonder Library) */
+          cdd_read_data(cdc.ram + offset, cdc.head[1]);
+          offset += 2328;
+        }
+
+        /* set STAT2 register FORM bit according to sub-header FORM bit when CTRL0 register AUTORQ bit is set */
+        if (cdc.ctrl[0] & BIT_AUTORQ)
+        {
+          cdc.stat[2] = (cdc.ctrl[1] & BIT_MODRQ) | ((cdc.head[1][2] & 0x20) >> 3);
+        }
+      }
 
       /* take care of buffer overrun */
-      offset = offset + 2048 + 4 - 0x4000;
-      if (offset > 0)
+      if (offset > 0x4000)
       {
         /* data should be written at the start of buffer */
-        memcpy(cdc.ram, cdc.ram + 0x4000, offset);
+        memcpy(cdc.ram, cdc.ram + 0x4000, offset - 0x4000);
       }
     }
   }
@@ -484,15 +515,15 @@ void cdc_reg_w(unsigned char data)
       /* set CRCOK bit only if decoding is enabled */
       cdc.stat[0] = data & BIT_DECEN;
 
-      /* update decoding mode */
+      /* update STAT2 register */
       if (data & BIT_AUTORQ)
       {
-        /* set MODE bit according to CTRL1 register & clear FORM bit */
-        cdc.stat[2] = cdc.ctrl[1] & BIT_MODRQ;
+        /* set MODE bit according to CTRL1 register MODRQ bit & set FORM bit according to sub-header FORM bit*/
+        cdc.stat[2] = (cdc.ctrl[1] & BIT_MODRQ) | ((cdc.head[1][2] & 0x20) >> 3);
       }
       else 
       {
-        /* set MODE & FORM bits according to CTRL1 register */
+        /* set MODE & FORM bits according to CTRL1 register MODRQ & FORMRQ bits */
         cdc.stat[2] = cdc.ctrl[1] & (BIT_MODRQ | BIT_FORMRQ);
       }
 
@@ -503,15 +534,15 @@ void cdc_reg_w(unsigned char data)
 
     case 0x0b:  /* CTRL1 */
     {
-      /* update decoding mode */
+      /* update STAT2 register */
       if (cdc.ctrl[0] & BIT_AUTORQ)
       {
-        /* set MODE bit according to CTRL1 register & clear FORM bit */
-        cdc.stat[2] = data & BIT_MODRQ;
+        /* set MODE bit according to CTRL1 register MODRQ bit & set FORM bit according to sub-header FORM bit*/
+        cdc.stat[2] = (data & BIT_MODRQ) | ((cdc.head[1][2] & 0x20) >> 3);
       }
       else 
       {
-        /* set MODE & FORM bits according to CTRL1 register */
+        /* set MODE & FORM bits according to CTRL1 register MODRQ & FORMRQ bits */
         cdc.stat[2] = data & (BIT_MODRQ | BIT_FORMRQ);
       }
 
@@ -612,7 +643,7 @@ unsigned char cdc_reg_r(void)
 
       /* clear pending decoder interrupt */
       cdc.ifstat |= BIT_DECI;
-      
+
 #if 0
       /* no pending data transfer end interrupt */
       if ((cdc.ifstat | BIT_DTEI) || !(cdc.ifctrl & BIT_DTEIEN))
@@ -639,13 +670,8 @@ unsigned short cdc_host_r(void)
   /* check if data is available */
   if (scd.regs[0x04>>1].byte.h & 0x40)
   {
-    /* read data word from CDC RAM buffer */
-    uint16 data = *(uint16 *)(cdc.ram + (cdc.dac.w & 0x3ffe));
-
-#ifdef LSB_FIRST
-    /* source data is stored in big endian format */
-    data = ((data >> 8) | (data << 8)) & 0xffff;
-#endif
+    /* read 16-bit word from CDC RAM buffer (big-endian format) */
+    uint16 data = READ_WORD(cdc.ram, cdc.dac.w & 0x3ffe);
 
 #ifdef LOG_CDC
     error("CDC host read 0x%04x -> 0x%04x (dbc=0x%x) (%X)\n", cdc.dac.w, data, cdc.dbc.w, s68k.pc);

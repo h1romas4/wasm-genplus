@@ -3,7 +3,7 @@
  *  Sound Hardware
  *
  *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2018  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -44,7 +44,7 @@
 #define YM2612_CLOCK_RATIO (7*6)
 
 /* FM output buffer (large enough to hold a whole frame at original chips rate) */
-#ifdef HAVE_YM3438_CORE
+#if defined(HAVE_YM3438_CORE) || defined(HAVE_OPLL_CORE)
 static int fm_buffer[1080 * 2 * 24];
 #else
 static int fm_buffer[1080 * 2];
@@ -70,6 +70,14 @@ static ym3438_t ym3438;
 static short ym3438_accm[24][2];
 static int ym3438_sample[2];
 static int ym3438_cycles;
+#endif
+
+#ifdef HAVE_OPLL_CORE
+static opll_t opll;
+static int opll_accm[18][2];
+static int opll_sample;
+static int opll_cycles;
+static int opll_status;
 #endif
 
 /* Run FM chip until required M-cycles */
@@ -126,7 +134,7 @@ static unsigned int YM2612_Read(unsigned int cycles, unsigned int a)
   if ((a == 0) || (config.ym2612 > YM2612_DISCRETE))
   {
     /* synchronize FM chip with CPU */
-    fm_update(cycles - fm_cycles_ratio + 1);
+    fm_update(cycles);
 
     /* read FM status */
     if (cycles >= fm_cycles_busy)
@@ -165,6 +173,11 @@ static void YM2413_Write(unsigned int cycles, unsigned int a, unsigned int v)
 
   /* write FM register */
   YM2413Write(a, v);
+}
+
+static unsigned int YM2413_Read(unsigned int cycles, unsigned int a)
+{
+    return YM2413Read();
 }
 
 #ifdef HAVE_YM3438_CORE
@@ -211,11 +224,64 @@ static void YM3438_Write(unsigned int cycles, unsigned int a, unsigned int v)
 static unsigned int YM3438_Read(unsigned int cycles, unsigned int a)
 {
   /* synchronize FM chip with CPU */
-  fm_update(cycles - fm_cycles_ratio + 1);
+  fm_update(cycles);
 
   /* read FM status */
   return OPN2_Read(&ym3438, a);
 }
+#endif
+
+#ifdef HAVE_OPLL_CORE
+static void OPLL2413_Update(int* buffer, int length)
+{
+  int i, j;
+  for (i = 0; i < length; i++)
+  {
+    OPLL_Clock(&opll, opll_accm[opll_cycles]);
+    opll_cycles = (opll_cycles + 1) % 18;
+    if (opll_cycles == 0)
+    {
+      opll_sample = 0;
+      for (j = 0; j < 18; j++)
+      {
+        opll_sample += opll_accm[j][0] + opll_accm[j][1];
+      }
+    }
+    *buffer++ = opll_sample * 16 * opll_status;
+    *buffer++ = opll_sample * 16 * opll_status;
+  }
+}
+
+static void OPLL2413_Reset(unsigned int cycles)
+{
+  /* synchronize FM chip with CPU */
+  fm_update(cycles);
+
+  /* reset FM chip */
+  OPLL_Reset(&opll, opll_type_ym2413);
+}
+
+static void OPLL2413_Write(unsigned int cycles, unsigned int a, unsigned int v)
+{
+  if (!(a&2))
+  {
+    /* synchronize FM chip with CPU */
+    fm_update(cycles);
+
+    /* write FM register */
+    OPLL_Write(&opll, a, v);
+  }
+  else
+  {
+    opll_status = v&1;
+  }
+}
+
+static unsigned int OPLL2413_Read(unsigned int cycles, unsigned int a)
+{
+    return 0xf8 | opll_status;
+}
+
 #endif
 
 void sound_init( void )
@@ -257,14 +323,34 @@ void sound_init( void )
   else
   {
     /* YM2413 */
-    YM2413Init();
-    YM_Update = (config.ym2413 & 1) ? YM2413Update : NULL;
-    fm_reset = YM2413_Reset;
-    fm_write = YM2413_Write;
-    fm_read = NULL;
+#ifdef HAVE_OPLL_CORE
+    if (config.opll)
+    {
+      /* Nuked OPLL */
+      memset(&opll, 0, sizeof(opll));
+      memset(&opll_accm, 0, sizeof(opll_accm));
+      opll_sample = 0;
+      opll_status = 0;
+      YM_Update = (config.ym2413 & 1) ? OPLL2413_Update : NULL;
+      fm_reset = OPLL2413_Reset;
+      fm_write = OPLL2413_Write;
+      fm_read = OPLL2413_Read;
 
-    /* chip is running at ZCLK / 72 = MCLK / 15 / 72 */
-    fm_cycles_ratio = 72 * 15;
+      /* chip is running at internal clock */
+      fm_cycles_ratio = 4 * 15;
+    }
+    else
+#endif
+    {
+      YM2413Init();
+      YM_Update = (config.ym2413 & 1) ? YM2413Update : NULL;
+      fm_reset = YM2413_Reset;
+      fm_write = YM2413_Write;
+      fm_read = YM2413_Read;
+
+      /* chip is running at ZCLK / 72 = MCLK / 15 / 72 */
+      fm_cycles_ratio = 72 * 15;
+    }
   }
 
   /* Initialize PSG chip */
@@ -401,7 +487,21 @@ int sound_context_save(uint8 *state)
   }
   else
   {
-    save_param(YM2413GetContextPtr(),YM2413GetContextSize());
+#ifdef HAVE_OPLL_CORE
+    save_param(&config.opll, sizeof(config.opll));
+    if (config.opll)
+    {
+      save_param(&opll, sizeof(opll));
+      save_param(&opll_accm, sizeof(opll_accm));
+      save_param(&opll_sample, sizeof(opll_sample));
+      save_param(&opll_cycles, sizeof(opll_cycles));
+      save_param(&opll_status, sizeof(opll_status));
+    }
+    else
+#endif
+    {
+      save_param(YM2413GetContextPtr(),YM2413GetContextSize());
+    }
   }
 
   bufferptr += psg_context_save(&state[bufferptr]);
@@ -437,7 +537,22 @@ int sound_context_load(uint8 *state)
   }
   else
   {
-    load_param(YM2413GetContextPtr(),YM2413GetContextSize());
+#ifdef HAVE_OPLL_CORE
+    uint8 config_opll;
+    load_param(&config_opll, sizeof(config_opll));
+    if (config_opll)
+    {
+      load_param(&opll, sizeof(opll));
+      load_param(&opll_accm, sizeof(opll_accm));
+      load_param(&opll_sample, sizeof(opll_sample));
+      load_param(&opll_cycles, sizeof(opll_cycles));
+      load_param(&opll_status, sizeof(opll_status));
+    }
+    else
+#endif
+    {
+      load_param(YM2413GetContextPtr(),YM2413GetContextSize());
+    }
   }
 
   bufferptr += psg_context_load(&state[bufferptr]);

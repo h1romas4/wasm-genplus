@@ -594,7 +594,7 @@ int load_rom(char *filename)
     /* load file into ROM buffer */
     char extension[4];
     size = load_archive(filename, cart.rom, cdd.loaded ? 0x800000 : MAXROMSIZE, extension);
-  
+
     /* mark BOOTROM as unloaded if they have been overwritten by cartridge ROM */
     if (size > 0x800000)
     {
