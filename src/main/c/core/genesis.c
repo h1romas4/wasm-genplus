@@ -5,7 +5,7 @@
  *  Support for SG-1000, Mark-III, Master System, Game Gear, Mega Drive & Mega CD hardware
  *
  *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2018  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -279,10 +279,18 @@ void gen_reset(int hard_reset)
         /* reset CD hardware */
         scd_reset(1);
       }
+
+      /* reset MD cartridge hardware (only when booting from cartridge) */
+      if (scd.cartridge.boot)
+      {
+        md_cart_reset(hard_reset);
+      }
     }
-    
-    /* reset MD cartridge hardware */
-    md_cart_reset(hard_reset);
+    else
+    {
+      /* reset MD cartridge hardware */
+      md_cart_reset(hard_reset);
+    }
 
     /* Z80 bus is released & Z80 is reseted */
     m68k.memory_map[0xa0].read8   = m68k_read_bus_8;

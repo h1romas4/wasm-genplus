@@ -1,7 +1,7 @@
 import wasm from './genplus.js';
 import './genplus.wasm';
 
-const ROM_PATH = './roms/bare_knukle_ii.bin';
+const ROM_PATH = './roms/sonic2.bin';
 const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
