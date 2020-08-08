@@ -15,17 +15,19 @@
 ```
 $ source ./emsdk_env.sh
 Adding directories to PATH:
-PATH += /home/hiromasa/toolchain/emsdk
-PATH += /home/hiromasa/toolchain/emsdk/upstream/emscripten
-PATH += /home/hiromasa/toolchain/emsdk/node/12.9.1_64bit/bin
+PATH += /home/hiromasa/devel/toolchain/emsdk
+PATH += /home/hiromasa/devel/toolchain/emsdk/upstream/emscripten
+PATH += /home/hiromasa/devel/toolchain/emsdk/node/12.18.1_64bit/bin
 
 Setting environment variables:
-EMSDK = /home/hiromasa/toolchain/emsdk
-EM_CONFIG = /home/hiromasa/.emscripten
-EMSDK_NODE = /home/hiromasa/toolchain/emsdk/node/12.9.1_64bit/bin/node
+EMSDK = /home/hiromasa/devel/toolchain/emsdk
+EM_CONFIG = /home/hiromasa/devel/toolchain/emsdk/.emscripten
+EM_CACHE = /home/hiromasa/devel/toolchain/emsdk/upstream/emscripten/cache
+EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/12.18.1_64bit/bin/node
+
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.39.11
-clang version 11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project baa6f6a7828a46c37b96227282938717220f8b34)
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.40.1
+clang version 12.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 9f21947a331203ee2579db87f1d1ec22a949e20a)
 ```
 
 ### Build
@@ -45,7 +47,7 @@ emmake make
 ```
 cd ..
 npm install
-npm run server
+npm run start
 ```
 
 **ROM file**
