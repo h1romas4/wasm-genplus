@@ -62,9 +62,11 @@ add_source_files(
     ./src/main/c/wasm/wasm.c
 )
 
-# source map option (but not working)
-#    -g4
-#    --source-map-base ./
+# source map option
+#   # -Oz
+#   -g
+#   -fdebug-compilation-dir='../src/main/c'
+#   -gseparate-dwarf='../src/main/js/genplus.dbg'
 
 add_compile_flags(C
     -Oz
