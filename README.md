@@ -22,12 +22,11 @@ PATH += /home/hiromasa/devel/toolchain/emsdk/node/12.18.1_64bit/bin
 Setting environment variables:
 EMSDK = /home/hiromasa/devel/toolchain/emsdk
 EM_CONFIG = /home/hiromasa/devel/toolchain/emsdk/.emscripten
-EM_CACHE = /home/hiromasa/devel/toolchain/emsdk/upstream/emscripten/cache
-EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/12.18.1_64bit/bin/node
+EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/14.15.5_64bit/bin/node
 
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 1.40.1
-clang version 12.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 9f21947a331203ee2579db87f1d1ec22a949e20a)
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 2.0.18
+clang version 13.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 94340dd5bb23fb7c4bc7d91d5ac0608eb25660a8)
 ```
 
 ### Build
