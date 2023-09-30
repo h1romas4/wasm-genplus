@@ -16,7 +16,8 @@ module.exports = {
             template: './src/main/html/index.html'
         }),
         new webpack.EnvironmentPlugin({
-            'ROM_PATH': 'rom/sonic2.bin'
+            'ROM_PATH': 'rom/sonic2.bin',
+            'PORT': 9000
         })
     ],
     externals: {
