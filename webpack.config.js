@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack');
 
 module.exports = {
     mode: 'development',
@@ -13,7 +14,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/main/html/index.html'
-        })
+        }),
+        new webpack.EnvironmentPlugin(['ROM_PATH'])
     ],
     externals: {
         fs: "empty"
@@ -46,7 +48,8 @@ module.exports = {
             "node_modules"
         ],
         "fallback": {
-            "path": require.resolve("path-browserify")
+            "path": require.resolve("path-browserify"),
+            "process": require.resolve("process/browser")
         }
     },
     performance: {

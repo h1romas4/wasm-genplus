@@ -18,10 +18,11 @@
         "webpack-merge": "^5.9.0"
     },
     "dependencies": {
-        "path-browserify": "^1.0.1"
+        "path-browserify": "^1.0.1",
+        "process": "^0.11.10"
     },
     "scripts": {
         "webpack": "webpack",
-        "start": "webpack-dev-server --config webpack.dev.js"
+        "start": "ROM_PATH=roms/sonic2.bin webpack-dev-server --config webpack.dev.js"
     }
 }
