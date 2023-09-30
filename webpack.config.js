@@ -44,7 +44,10 @@ module.exports = {
         extensions: ['.js'],
         modules: [
             "node_modules"
-        ]
+        ],
+        "fallback": {
+            "path": require.resolve("path-browserify")
+        }
     },
     performance: {
         hints: false
