@@ -23,6 +23,6 @@
     },
     "scripts": {
         "webpack": "webpack",
-        "start": "ROM_PATH=roms/sonic2.bin webpack-dev-server --config webpack.dev.js"
+        "start": "webpack-dev-server --config webpack.dev.js"
     }
 }

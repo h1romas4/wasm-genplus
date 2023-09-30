@@ -15,7 +15,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/main/html/index.html'
         }),
-        new webpack.EnvironmentPlugin(['ROM_PATH'])
+        new webpack.EnvironmentPlugin({
+            'ROM_PATH': 'rom/sonic2.bin'
+        })
     ],
     externals: {
         fs: "empty"
