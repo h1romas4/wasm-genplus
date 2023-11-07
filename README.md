@@ -58,7 +58,7 @@ npm run start
 
 ```
 ROM_PATH="rom/sonic2.bin"
-POR=9000
+PORT=9000
 ```
 
 **Play**
@@ -89,7 +89,7 @@ emmake make
 
 ```
 ROM_PATH="rom/sonic2.bin"
-POR=9000
+PORT=9000
 ```
 
 **Play**
