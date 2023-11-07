@@ -1,7 +1,8 @@
 import wasm from './genplus.js';
 import './genplus.wasm';
+import process from 'process'
 
-const ROM_PATH = './roms/sonic2.bin';
+const ROM_PATH = process.env['ROM_PATH'];
 const CANVAS_WIDTH = 640;
 const CANVAS_HEIGHT = 480;
 const SOUND_FREQUENCY = 44100;
