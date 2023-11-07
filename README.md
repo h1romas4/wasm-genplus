@@ -14,19 +14,22 @@
 
 ```
 $ source ./emsdk_env.sh
+Setting up EMSDK environment (suppress these messages with EMSDK_QUIET=1)
 Adding directories to PATH:
 PATH += /home/hiromasa/devel/toolchain/emsdk
 PATH += /home/hiromasa/devel/toolchain/emsdk/upstream/emscripten
-PATH += /home/hiromasa/devel/toolchain/emsdk/node/12.18.1_64bit/bin
 
 Setting environment variables:
+PATH = /home/hiromasa/devel/toolchain/emsdk:/home/hiromasa/devel/toolchain/emsdk/upstream/emscripten:/home/hiromasa/devel/toolchain/appimage:/home/hiromasa/.wasmtime/bin:/home/hiromasa/devel/msx/z88dk/bin:/home/hiromasa/.wasmer/bin:/home/hiromasa/.local/bin:/home/hiromasa/.cargo/bin:/home/hiromasa/.sdkman/candidates/java/current/bin:/home/hiromasa/.sdkman/candidates/groovy/current/bin:/home/hiromasa/.sdkman/candidates/gradle/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/hiromasa/.dotnet/tools
 EMSDK = /home/hiromasa/devel/toolchain/emsdk
-EM_CONFIG = /home/hiromasa/devel/toolchain/emsdk/.emscripten
-EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/14.15.5_64bit/bin/node
+EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/16.20.0_64bit/bin/node
 
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 2.0.18
-clang version 13.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 94340dd5bb23fb7c4bc7d91d5ac0608eb25660a8)
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.48 (e967e20b4727956a30592165a3c1cde5c67fa0a8)
+clang version 18.0.0 (https://github.com/llvm/llvm-project a54545ba6514802178cf7cf1c1dd9f7efbf3cde7)
+Target: wasm32-unknown-emscripten
+Thread model: posix
+InstalledDir: /home/hiromasa/devel/toolchain/emsdk/upstream/bin
 ```
 
 ### Build
@@ -49,18 +52,13 @@ npm install
 npm run start
 ```
 
-**ROM file**
+**Setting**
 
-Deploy the .bin file
-
-```
-docs/roms
-```
-
-Set path, src/main/js/index.js
+`.env`
 
 ```
-const ROM_PATH = './roms/sonic2.bin';
+ROM_PATH="rom/sonic2.bin"
+POR=9000
 ```
 
 **Play**
@@ -85,18 +83,13 @@ emcmake cmake ..
 emmake make
 ```
 
-**ROM file**
+**Setting**
 
-Drag and drop the .bin file
-
-```
-docs/roms/
-```
-
-Set path, src/main/js/index.js
+`.env`
 
 ```
-const ROM_PATH = './roms/sonic2.bin';
+ROM_PATH="rom/sonic2.bin"
+POR=9000
 ```
 
 **Play**
