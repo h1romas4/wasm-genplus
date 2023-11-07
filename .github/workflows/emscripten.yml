@@ -1,15 +1,27 @@
 name: Emscripten CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v1
 
+    - uses: actions/cache@v3
+      id: cache-toolchaine
+      with:
+        path: |
+          ~/emsdk
+        key: ${{ runner.os }}-emscripten-latest-1
+
     - name: Install Emscripten SDK
+      if: steps.cache-toolchaine.outputs.cache-hit != 'true'
       run: |
+        cd ~/
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         ./emsdk install latest
@@ -17,9 +29,7 @@ jobs:
 
     - name: Emscripten build
       run: |
-        cd emsdk
-        source ./emsdk_env.sh
-        cd ../
+        source ~/emsdk/emsdk_env.sh
         mkdir build && cd build
         emcmake cmake ..
         emmake make
