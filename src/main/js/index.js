@@ -60,7 +60,7 @@ const message = function(mes) {
     let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
     if(pixelRatio > 1 && window.screen.width < CANVAS_WIDTH) {
         canvas.style.width = CANVAS_WIDTH + "px";
-        canvas.style.heigth = CANVAS_HEIGHT + "px";
+        canvas.style.height = CANVAS_HEIGHT + "px";
     }
     canvasContext = canvas.getContext('2d');
     canvasImageData = canvasContext.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
