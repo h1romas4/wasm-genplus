@@ -25,8 +25,8 @@ EMSDK = /home/hiromasa/devel/toolchain/emsdk
 EMSDK_NODE = /home/hiromasa/devel/toolchain/emsdk/node/16.20.0_64bit/bin/node
 
 $ emcc -v
-emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.48 (e967e20b4727956a30592165a3c1cde5c67fa0a8)
-clang version 18.0.0 (https://github.com/llvm/llvm-project a54545ba6514802178cf7cf1c1dd9f7efbf3cde7)
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.57 (1df9c1977b49926c1efca672c31414da45c0c7bb)
+clang version 19.0.0git (https:/github.com/llvm/llvm-project ccdebbae4d77d3efc236af92c22941de5d437e01)
 Target: wasm32-unknown-emscripten
 Thread model: posix
 InstalledDir: /home/hiromasa/devel/toolchain/emsdk/upstream/bin
