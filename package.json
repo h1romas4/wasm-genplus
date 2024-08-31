@@ -12,7 +12,7 @@
         "file-loader": "^6.2.0",
         "html-webpack-plugin": "^5.6.0",
         "htmlhint": "^1.1.4",
-        "webpack": "^5.91.0",
+        "webpack": "^5.94.0",
         "webpack-cli": "^5.1.4",
         "webpack-dev-server": "^5.0.4",
         "webpack-merge": "^5.10.0"
